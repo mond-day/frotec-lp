@@ -1,0 +1,51 @@
+# Exemplo de stack para Portainer / Docker Swarm com Traefik.
+#
+# Antes de subir:
+#   1. Construa e publique a imagem: docker build -t SEU-REGISTRY/frotec-lp:latest . && docker push ...
+#   2. Ajuste o dominio nas labels do Traefik.
+#   3. Defina as variaveis de SMTP no ambiente da stack no Portainer.
+#
+# A rede do Traefik precisa existir e ser overlay/attachable.
+
+version: "3.8"
+
+services:
+  frotec-lp:
+    image: SEU-REGISTRY/frotec-lp:latest
+    environment:
+      # Servidor de e-mail que envia os leads ao comercial. Lidas em runtime pela
+      # rota /api/lead, entao trocar o valor aqui e redeployar basta — nao precisa
+      # reconstruir a imagem.
+      #
+      # SMTP_PASS fica visivel em texto para quem abre a stack no Portainer. Se
+      # isso for um problema, o proximo passo e um Docker secret montado em
+      # arquivo, o que exige adaptar lerConfigSmtp em lib/email.ts para ler o
+      # conteudo do arquivo apontado por uma variavel SMTP_PASS_FILE.
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_SECURE: ${SMTP_SECURE}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      LEAD_EMAIL_TO: ${LEAD_EMAIL_TO}
+      LEAD_EMAIL_FROM: ${LEAD_EMAIL_FROM}
+    networks:
+      - traefik-public
+    deploy:
+      replicas: 2
+      update_config:
+        order: start-first
+        failure_action: rollback
+      restart_policy:
+        condition: on-failure
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.http.routers.frotec-lp.rule=Host(`www.frotec.com.br`)
+        - traefik.http.routers.frotec-lp.entrypoints=websecure
+        - traefik.http.routers.frotec-lp.tls=true
+        - traefik.http.routers.frotec-lp.tls.certresolver=letsencrypt
+        - traefik.http.services.frotec-lp.loadbalancer.server.port=3000
+
+networks:
+  traefik-public:
+    external: true
