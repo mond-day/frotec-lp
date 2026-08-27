@@ -148,38 +148,62 @@ Pacote de producao ja neste repositorio — nao precisa de arquivo extra:
 | Arquivo | Papel |
 | --- | --- |
 | `Dockerfile` | Imagem Node 22 Alpine com saida `standalone` do Next |
-| `stack.yml` | Stack Swarm (2 replicas) + labels Traefik |
+| `stack.yml` | Stack Swarm (`ghcr.io/mond-day/frotec-lp:latest`, 2 replicas) + labels Traefik |
 | `.env.example` | Variaveis SMTP (lidas em runtime, sem rebuild) |
-| `scripts/build-image.ps1` | Atalho Windows para o `docker build` |
+| `.github/workflows/ci.yml` | Lint, tipos, build e publicacao da imagem no GHCR |
+| `scripts/build-image.ps1` | Atalho Windows para um `docker build` local (opcional) |
 
-O swarm precisa de um **registry** de verdade (privado ou publico) e da rede overlay
-`traefik-public` com o Traefik ja rodando. Este repo nao cria o Traefik nem o registry.
-Troque o placeholder `SEU-REGISTRY` pela URL real (ex.: `ghcr.io/mond-day` ou o registry
-interno da empresa). O dominio de exemplo nas labels e `www.frotec.com.br`.
+Fluxo: **push na `main`** → GitHub Actions valida o site, constroi a imagem e publica em
+`ghcr.io/mond-day/frotec-lp` (`:latest` e `:<sha do commit>`) → o Portainer faz **pull**
+dessa imagem. Nao e preciso construir nem fazer push na maquina local.
 
-### 1. Construir a imagem
+O repositorio e **privado**, entao o pacote no GitHub Container Registry tambem e privado.
+Sem um registry cadastrado no Portainer (PAT com `read:packages`), os nos do swarm nao
+conseguem puxar a imagem. A rede overlay `traefik-public` com o Traefik ja precisa existir
+— este repo nao cria o Traefik. O dominio nas labels e `www.frotec.com.br`.
 
-Na raiz do repo. O build precisa de rede: o `next/font` baixa as fontes do Google e as
-embute na imagem.
+`latest` e mutavel: cada push na `main` a substitui. Para pin, use a tag SHA no `stack.yml`
+(`ghcr.io/mond-day/frotec-lp:<sha>`).
+
+### 1. Publicar a imagem (automatico)
+
+Merge ou push na `main`. O job `imagem` do workflow faz login no GHCR com `GITHUB_TOKEN`
+e publica. Acompanhe em Actions. Pull requests so constroem a imagem, sem push.
+
+Build local (opcional, para testar o Dockerfile):
 
 ```bash
-docker build -t SEU-REGISTRY/frotec-lp:latest .
+docker build -t ghcr.io/mond-day/frotec-lp:latest .
 ```
 
 No Windows PowerShell:
 
 ```powershell
-.\scripts\build-image.ps1 -Tag SEU-REGISTRY/frotec-lp:latest
+.\scripts\build-image.ps1 -Tag ghcr.io/mond-day/frotec-lp:latest
 ```
 
-### 2. Publicar no registry
+### 2. Cadastrar o GHCR no Portainer
 
-```bash
-docker push SEU-REGISTRY/frotec-lp:latest
-```
+O repositorio `mond-day/frotec-lp` e privado: o Portainer precisa de um **Docker Registry**
+do tipo GitHub para autenticar o pull.
 
-Os nos do swarm precisam conseguir puxar essa imagem. Se o registry for privado, faca
-`docker login` em cada no (ou use o mecanismo de registry do Portainer).
+1. Portainer > **Registries** > **Add registry**
+2. Tipo: **GitHub** (ou Custom / Docker Registry, se a versao nao tiver o preset)
+3. **Registry URL:** `ghcr.io`
+4. **Username:** seu usuario GitHub (nao o nome da organizacao)
+5. **Password:** um Personal Access Token (classic) com:
+   - `read:packages` — obrigatorio para puxar a imagem
+   - `repo` — necessario em token classico quando o pacote esta ligado a este
+     repositorio privado
+6. Salve. A stack precisa usar esse registry no deploy (na maioria das versoes do
+   Portainer isso e automatico quando a URL da imagem e `ghcr.io/...`).
+
+O token nao vai para o `stack.yml` nem para este README. Gere em GitHub >
+Settings > Developer settings > Personal access tokens. Se a org `mond-day` tiver SSO,
+autorize o PAT para a organizacao.
+
+Quem nao usa Portainer para o pull: `echo SEU_PAT | docker login ghcr.io -u USUARIO --password-stdin`
+em cada no do swarm.
 
 ### 3. Colar a stack no Portainer
 
@@ -187,10 +211,11 @@ Os nos do swarm precisam conseguir puxar essa imagem. Se o registry for privado,
 2. Nome sugerido: `frotec-lp`
 3. Cole o conteudo de `stack.yml` (Web editor) — ou aponte o Git deste repo se o Portainer
    ja clona o projeto
-4. Confirme que `image:` usa a **mesma tag** publicada no passo 2
+4. Confirme que `image:` aponta para `ghcr.io/mond-day/frotec-lp:latest` (ja vem assim)
 5. Confira o dominio `www.frotec.com.br` nas labels do Traefik
 6. Em **Environment variables** da stack, preencha as variaveis SMTP (passo 4)
-7. Deploy
+7. Deploy. Depois de cada push na `main`, faca **Update the stack** (Pull and
+   redeploy) para os nos puxarem o novo `latest`.
 
 A rede `traefik-public` precisa existir (overlay/attachable, conforme o Traefik da casa).
 Se o deploy falhar com "network traefik-public not found", a stack do Traefik ainda nao

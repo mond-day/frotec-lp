@@ -2,8 +2,9 @@
 # Usa a saida "standalone" do Next (definida em next.config.ts), que ja embute
 # so as dependencias necessarias para rodar em producao.
 #
-# Build:  docker build -t frotec-lp:latest .
-# Run:    docker run -p 3000:3000 --env-file .env.local frotec-lp:latest
+# Build:  docker build -t ghcr.io/mond-day/frotec-lp:latest .
+# Run:    docker run -p 3000:3000 --env-file .env.local ghcr.io/mond-day/frotec-lp:latest
+# Em producao o CI publica essa imagem no GHCR a cada push na main.
 #
 # O build precisa de rede: o next/font baixa as fontes do Google e as embute
 # como assets estaticos da propria imagem.

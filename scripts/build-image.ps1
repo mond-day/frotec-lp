@@ -1,12 +1,13 @@
 # Constroi a imagem de producao da LP (saida standalone do Next).
+# Em producao o GitHub Actions ja publica em ghcr.io/mond-day/frotec-lp.
+# Este script e so para testar o Dockerfile na maquina local.
+#
 # Uso:
 #   .\scripts\build-image.ps1
-#   .\scripts\build-image.ps1 -Tag SEU-REGISTRY/frotec-lp:latest
-#
-# Depois: docker push <a mesma tag>
+#   .\scripts\build-image.ps1 -Tag ghcr.io/mond-day/frotec-lp:latest
 
 param(
-    [string]$Tag = "frotec-lp:latest"
+    [string]$Tag = "ghcr.io/mond-day/frotec-lp:latest"
 )
 
 Set-Location (Join-Path $PSScriptRoot "..")
@@ -20,5 +21,5 @@ if ($LASTEXITCODE -ne 0) {
 
 Write-Host ""
 Write-Host "Imagem pronta: $Tag"
-Write-Host "Para publicar no registry (troque SEU-REGISTRY de verdade):"
+Write-Host "Push na main e o CI que publica no GHCR. Push local so se voce souber o que esta fazendo:"
 Write-Host "  docker push $Tag"

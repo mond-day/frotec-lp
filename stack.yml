@@ -1,14 +1,28 @@
 # Stack Swarm para Portainer + Traefik.
 #
+# A imagem e publicada automaticamente pelo GitHub Actions em cada push na
+# main (ghcr.io/mond-day/frotec-lp:latest e :sha). Nao e preciso construir
+# nem fazer push na maquina local.
+#
+# O repositorio e privado, entao o pacote no GHCR tambem e privado. Os nos
+# do swarm so puxam a imagem se o Portainer tiver um Docker Registry
+# cadastrado para o GitHub:
+#   URL:      ghcr.io
+#   Username: seu usuario GitHub
+#   Password: PAT com escopo read:packages
+#             (token classico tambem precisa de repo se o pacote estiver
+#             ligado a este repositorio privado)
+#
 # Passos:
-#   1. docker build -t SEU-REGISTRY/frotec-lp:latest .
-#      (ou .\scripts\build-image.ps1 -Tag SEU-REGISTRY/frotec-lp:latest)
-#   2. docker push SEU-REGISTRY/frotec-lp:latest
-#   3. No Portainer: Stacks > Add stack > cole este arquivo.
-#   4. Troque SEU-REGISTRY pela URL real do registry (a imagem precisa
-#      ser puxavel pelos nos do swarm).
-#   5. Confira o dominio nas labels do Traefik.
-#   6. Preencha as variaveis SMTP no ambiente da stack (ver .env.example).
+#   1. Cadastre o registry GitHub no Portainer (Registries), se ainda nao
+#      existir — veja o README, secao Deploy.
+#   2. Portainer: Stacks > Add stack > cole este arquivo (ou aponte o Git).
+#   3. Confira o dominio nas labels do Traefik.
+#   4. Preencha as variaveis SMTP no ambiente da stack (ver .env.example).
+#
+# latest e mutavel: cada push na main a substitui. Para pin de versao,
+# troque a tag abaixo pelo SHA completo do commit publicado
+# (ghcr.io/mond-day/frotec-lp:<sha>).
 #
 # A rede traefik-public precisa existir (overlay) e o Traefik ja precisa
 # estar nela. Este arquivo nao cria o Traefik.
@@ -17,7 +31,7 @@ version: "3.8"
 
 services:
   frotec-lp:
-    image: SEU-REGISTRY/frotec-lp:latest
+    image: ghcr.io/mond-day/frotec-lp:latest
     environment:
       # Servidor de e-mail que envia os leads ao comercial. Lidas em runtime pela
       # rota /api/lead, entao trocar o valor aqui e redeployar basta — nao precisa
