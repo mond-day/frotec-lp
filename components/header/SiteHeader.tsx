@@ -5,8 +5,9 @@ import { useEffect, useId, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
 
 const NAV_LINKS = [
+  { href: "#dor", label: "O problema" },
   { href: "#como-funciona", label: "Como funciona" },
-  { href: "#beneficios", label: "Benefícios" },
+  { href: "#ganhos", label: "Ganhos" },
   { href: "#cobertura", label: "Cobertura" },
   { href: "#faq", label: "FAQ" },
 ];
@@ -15,14 +16,17 @@ export default function SiteHeader() {
   const [menuAberto, setMenuAberto] = useState(false);
   const [rolou, setRolou] = useState(false);
   const [mostrarCtaMobile, setMostrarCtaMobile] = useState(false);
+  const [progresso, setProgresso] = useState(0);
   const menuId = useId();
   const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const aoRolar = () => {
       const y = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
       setRolou(y > 24);
       setMostrarCtaMobile(y > window.innerHeight * 0.85);
+      setProgresso(max > 0 ? Math.min(100, (y / max) * 100) : 0);
     };
     aoRolar();
     window.addEventListener("scroll", aoRolar, { passive: true });
@@ -62,6 +66,7 @@ export default function SiteHeader() {
 
   return (
     <>
+      <div className="progress-bar" style={{ width: `${progresso}%` }} aria-hidden="true" />
       <header className={rolou ? "scrolled" : undefined}>
         <nav ref={navRef}>
           <a href="#topo" className="brand" aria-label="Frotec — início">
@@ -92,7 +97,7 @@ export default function SiteHeader() {
                   track("hero_cta_click", { source: "nav_mobile" });
                 }}
               >
-                Avaliar minha frota
+                Avaliar minha frota <span className="btn-arrow" aria-hidden="true">→</span>
               </a>
             </li>
           </ul>
@@ -102,7 +107,7 @@ export default function SiteHeader() {
             className="btn btn-primary desktop-only nav-cta"
             onClick={() => track("hero_cta_click", { source: "nav" })}
           >
-            Avaliar minha frota
+            Avaliar minha frota <span className="btn-arrow" aria-hidden="true">→</span>
           </a>
 
           <button
@@ -124,7 +129,7 @@ export default function SiteHeader() {
           className="btn btn-primary"
           onClick={() => track("hero_cta_click", { source: "mobile_sticky" })}
         >
-          Avaliar minha frota
+          Avaliar minha frota <span className="btn-arrow" aria-hidden="true">→</span>
         </a>
       </div>
     </>

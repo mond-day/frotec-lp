@@ -1,11 +1,11 @@
 /* Frotec — design tokens (Industrial Editorial / Road Intelligence) */
 
 :root {
-  /* Surfaces */
-  --bg: #12151c;
-  --bg-1: #181c24;
-  --bg-2: #1e2430;
-  --bg-elevated: #242b38;
+  /* Surfaces — paleta do redesign (HTML de design review) */
+  --bg: #0d1016;
+  --bg-1: #12161e;
+  --bg-2: #181d26;
+  --bg-elevated: #1b212c;
   --surface-light: #ece8e1;
   --surface-warm: #e4dfd6;
   --surface-paper: #f4f1eb;
@@ -33,11 +33,12 @@
   --line-strong-on-light: rgba(26, 31, 40, 0.18);
 
   /* Geometry */
-  --radius: 12px;
-  --radius-lg: 20px;
+  --radius: 16px;
+  --radius-lg: 22px;
   --radius-sm: 8px;
-  --maxw: 1180px;
-  --header-h: 72px;
+  --radius-pill: 999px;
+  --maxw: 1240px;
+  --header-h: 76px;
 
   /* Motion */
   --motion-fast: 180ms;

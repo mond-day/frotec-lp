@@ -39,20 +39,20 @@ const STEPS = [
 
 /** Path horizontal desktop — viewBox com padding lateral. */
 const DESKTOP_PATH =
-  "M 80 120 C 150 120, 170 48, 250 48 S 350 188, 430 188 S 530 48, 610 48 S 710 188, 790 188 S 890 120, 1000 120";
+  "M 60 150 C 140 150, 160 60, 250 60 S 350 210, 440 210 S 540 60, 630 60 S 730 210, 820 210 S 930 150, 1020 150";
 
 const NODE_POSITIONS = [
-  { x: 80, y: 120 },
-  { x: 250, y: 48 },
-  { x: 430, y: 188 },
-  { x: 610, y: 48 },
-  { x: 790, y: 188 },
-  { x: 1000, y: 120 },
+  { x: 60, y: 150 },
+  { x: 250, y: 60 },
+  { x: 440, y: 210 },
+  { x: 630, y: 60 },
+  { x: 820, y: 210 },
+  { x: 1020, y: 150 },
 ];
 
 /** viewBox width/height usados no posicionamento % do overlay HTML. */
 const VB_W = 1080;
-const VB_H = 280;
+const VB_H = 300;
 
 export default function FailureChain() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -88,8 +88,9 @@ export default function FailureChain() {
         <Reveal>
           <div className="eyebrow">Cadeia de impacto</div>
           <h2 id="cadeia-title">Operar reagindo multiplica o custo de cada falha.</h2>
-          <p style={{ marginTop: 14, maxWidth: 520 }}>
-            Não é só o conserto. É a sequência que começa depois que o caminhão já parou.
+          <p style={{ marginTop: 16, maxWidth: 560 }}>
+            Não é só o conserto. É a sequência que começa depois que o caminhão já parou — role
+            para ver ela acontecer.
           </p>
         </Reveal>
 
@@ -130,11 +131,11 @@ export default function FailureChain() {
                     <circle
                       cx={pos.x}
                       cy={pos.y}
-                      r={on ? 9 : 7}
-                      fill={on ? "#f0a93c" : "#12151c"}
+                      r={on ? 8 : 6}
+                      fill={on ? (i === destaque ? "#ff6b6b" : "#f0a93c") : "#0d1016"}
                       stroke="#f0a93c"
                       strokeWidth="2"
-                      opacity={on ? 1 : 0.35}
+                      opacity={on ? 1 : 0.3}
                     />
                     {on && i === destaque && !reduce && (
                       <circle
@@ -191,6 +192,9 @@ export default function FailureChain() {
           </div>
 
           <div className="failure-active-copy" aria-live="polite">
+            <div className="failure-index">
+              ETAPA {String(destaque + 1).padStart(2, "0")} / 06
+            </div>
             <strong>{STEPS[destaque].title}</strong>
             <p>{STEPS[destaque].copy}</p>
           </div>

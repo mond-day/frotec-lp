@@ -1,8 +1,58 @@
 /* Motion utilities — reduced motion + reveal helpers */
 
+@keyframes fx-dash {
+  to {
+    stroke-dashoffset: -240;
+  }
+}
+
+@keyframes fx-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 225, 177, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(16, 225, 177, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 225, 177, 0);
+  }
+}
+
+@keyframes fx-breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes fx-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-60px, -30px, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .hero-art-grid,
+  .hero-art-dash,
+  .hero-art-pulse,
+  .corridor-dash,
+  .op-status::before {
+    animation: none !important;
+  }
+
+  .corridor-plate {
+    transition: none;
+    transform: none !important;
   }
 
   *,

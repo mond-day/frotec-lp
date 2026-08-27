@@ -28,7 +28,7 @@ export default function FitSection() {
 
         <div className="fit-grid">
           <Reveal>
-            <h3>Situações em que encaixa</h3>
+            <h3 className="fit-yes">Situações em que encaixa</h3>
             <ul className="fit-list">
               {FAZ_SENTIDO.map((item) => (
                 <li key={item}>{item}</li>
@@ -36,7 +36,7 @@ export default function FitSection() {
             </ul>
           </Reveal>
           <Reveal delay={0.08}>
-            <h3>Talvez não seja para você se…</h3>
+            <h3 className="fit-no">Talvez não seja para você se…</h3>
             <ul className="fit-list">
               {TALVEZ_NAO.map((item) => (
                 <li key={item}>{item}</li>

@@ -1,6 +1,5 @@
 import CoverageSection from "@/components/proof/CoverageSection";
 import Contato from "@/components/Contato";
-import MidPageCTA from "@/components/conversion/MidPageCTA";
 import Footer from "@/components/Footer";
 import SiteHeader from "@/components/header/SiteHeader";
 import Hero from "@/components/hero/Hero";
@@ -31,7 +30,6 @@ export default function Home() {
         <ScopeAndLimits />
         <FitSection />
         <OperationalProof />
-        <MidPageCTA />
         <FAQ />
         <Contato />
       </main>

@@ -228,7 +228,7 @@ export default function LeadQualificationForm() {
 
           <div className="form-actions">
             <button type="submit" className="btn btn-primary btn-block">
-              Continuar
+              Continuar <span className="btn-arrow" aria-hidden="true">→</span>
             </button>
           </div>
         </>
@@ -353,7 +353,9 @@ export default function LeadQualificationForm() {
                   Enviando…
                 </span>
               ) : (
-                "Avaliar minha frota"
+                <>
+                  Avaliar minha frota <span className="btn-arrow" aria-hidden="true">→</span>
+                </>
               )}
             </button>
           </div>

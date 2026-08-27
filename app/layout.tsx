@@ -8,27 +8,27 @@ import "./globals.css";
 const barlowCondensed = Barlow_Condensed({
   variable: "--font-title",
   subsets: ["latin"],
-  weight: ["600", "700"],
+  weight: ["500", "600", "700"],
 });
 
 const manrope = Manrope({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["500", "600"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
-  title: "Frotec+ | Gestão técnica para frotas que não podem parar",
+  title: "Frotec | Gestão técnica para frotas que não podem parar",
   description:
     "Acompanhe o estado técnico da frota, organize a prevenção e audite serviços — antes que uma falha vire emergência na estrada. Atuação no corredor BR-163, eixo MT–RO.",
   openGraph: {
-    title: "Frotec+ | Gestão técnica para frotas que não podem parar",
+    title: "Frotec | Gestão técnica para frotas que não podem parar",
     description:
       "Previsibilidade técnica para frotas diesel: prevenção, auditoria de OS e cobertura no corredor BR-163.",
     locale: "pt_BR",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Frotec+ | Gestão técnica para frotas que não podem parar",
+    title: "Frotec | Gestão técnica para frotas que não podem parar",
     description:
       "Previsibilidade técnica para frotas diesel no corredor BR-163 — MT e RO.",
   },

@@ -51,10 +51,13 @@ const ETAPAS = [
   },
 ];
 
-function Painel({ etapa }: { etapa: (typeof ETAPAS)[number] }) {
+function Painel({ etapa, indice }: { etapa: (typeof ETAPAS)[number]; indice: number }) {
   return (
     <div className="process-panel-card">
-      <span className="demo-tag">Modelo demonstrativo</span>
+      <div className="process-panel-head">
+        <span className="demo-tag">Modelo demonstrativo</span>
+        <span className="process-panel-n">{String(indice + 1).padStart(2, "0")} / 04</span>
+      </div>
       <h3>{etapa.titulo}</h3>
       <p>{etapa.texto}</p>
       <div className="process-panel-meta">
@@ -127,8 +130,16 @@ export default function ProcessStory() {
     >
       <div className="process-story-inner">
         <div className="process-story-rail">
-          <div className="process-progress">
-            {String(visivel + 1).padStart(2, "0")} / {String(ETAPAS.length).padStart(2, "0")}
+          <div className="process-progress-row">
+            <div className="process-progress">
+              {String(visivel + 1).padStart(2, "0")} / {String(ETAPAS.length).padStart(2, "0")}
+            </div>
+            <div className="process-progress-track" aria-hidden="true">
+              <div
+                className="process-progress-fill"
+                style={{ width: `${((visivel + 1) / ETAPAS.length) * 100}%` }}
+              />
+            </div>
           </div>
           <div className="eyebrow" style={{ color: "#0a7a5f" }}>
             Como funciona
@@ -176,7 +187,7 @@ export default function ProcessStory() {
                 className={`process-panel-layer${index === visivel ? " is-active" : ""}`}
                 aria-hidden={index !== visivel}
               >
-                <Painel etapa={item} />
+                <Painel etapa={item} indice={index} />
               </div>
             ))}
           </div>
@@ -196,7 +207,7 @@ export default function ProcessStory() {
             <div className="process-progress" style={{ marginBottom: 10 }}>
               {String(index + 1).padStart(2, "0")} / 04
             </div>
-            <Painel etapa={item} />
+            <Painel etapa={item} indice={index} />
           </div>
         ))}
       </div>

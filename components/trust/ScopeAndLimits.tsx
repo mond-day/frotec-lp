@@ -31,7 +31,7 @@ export default function ScopeAndLimits() {
         </Reveal>
 
         <div className="scope-grid">
-          <Reveal className="scope-col">
+          <Reveal className="scope-col scope-yes">
             <h3>Faz</h3>
             <ul className="scope-list yes">
               {FAZ.map((item) => (
@@ -39,7 +39,7 @@ export default function ScopeAndLimits() {
               ))}
             </ul>
           </Reveal>
-          <Reveal className="scope-col" delay={0.08}>
+          <Reveal className="scope-col scope-no" delay={0.08}>
             <h3>Não é</h3>
             <ul className="scope-list no">
               {NAO_E.map((item) => (

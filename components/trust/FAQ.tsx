@@ -88,14 +88,14 @@ export default function FAQ() {
   const [abertoIndex, setAbertoIndex] = useState<number | null>(null);
 
   return (
-    <section id="faq" aria-labelledby="faq-title" style={{ padding: "100px 0" }}>
-      <div className="wrap" style={{ maxWidth: "820px" }}>
+    <section id="faq" className="faq-section" aria-labelledby="faq-title">
+      <div className="wrap faq-wrap">
         <div className="section-head">
           <div className="eyebrow">Perguntas frequentes</div>
           <h2 id="faq-title">Ainda com dúvidas?</h2>
         </div>
 
-        <div>
+        <div className="faq-list">
           {PERGUNTAS.map((item, index) => (
             <FaqItem
               key={item.pergunta}

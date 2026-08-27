@@ -1,25 +1,42 @@
-"use client";
+const ROWS = [
+  { k: "Veículo 042", v: "Preventivo programado", accent: true },
+  { k: "Próxima ação", v: "28 AGO", accent: false },
+  { k: "Risco atual", v: "Baixo", accent: true },
+  { k: "Origem", v: "Modelo demonstrativo", muted: true },
+];
 
 /**
- * Microprova operacional — mantida fora da dobra principal do Hero.
- * Usada abaixo do Hero quando precisamos reforçar status sem poluir a 1ª viewport.
+ * Recorte operacional da dobra do hero (variante Corredor do redesign).
  */
 export default function HeroOperationalData() {
   return (
-    <aside className="op-chip" aria-label="Recorte operacional ilustrativo">
-      <div className="op-chip-label">Veículo 042 · status técnico</div>
-      <div className="op-chip-row">
-        <span>Situação</span>
-        <span className="op-status">Preventivo programado</span>
+    <div className="hero-aside">
+      <aside className="op-chip" aria-label="Recorte operacional ilustrativo">
+        <div className="op-chip-head">
+          <span>Recorte operacional</span>
+          <span className="op-status">Demonstrativo</span>
+        </div>
+        {ROWS.map((row) => (
+          <div className="op-chip-row" key={row.k}>
+            <span>{row.k}</span>
+            <span className={row.muted ? "is-muted" : row.accent ? "is-accent" : undefined}>
+              {row.v}
+            </span>
+          </div>
+        ))}
+      </aside>
+      <div className="hero-stats">
+        <div className="hero-stat">
+          <div className="hero-stat-value is-accent">~1.500</div>
+          <div className="hero-stat-label">km de corredor</div>
+        </div>
+        <div className="hero-stat">
+          <div className="hero-stat-value">
+            MT<span className="is-muted">·</span>RO
+          </div>
+          <div className="hero-stat-label">base em Sinop</div>
+        </div>
       </div>
-      <div className="op-chip-row">
-        <span>Próxima ação</span>
-        <span>28 AGO</span>
-      </div>
-      <div className="op-chip-row">
-        <span>Origem</span>
-        <span>Modelo demonstrativo</span>
-      </div>
-    </aside>
+    </div>
   );
 }

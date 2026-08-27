@@ -47,3 +47,124 @@ export const EXTREMIDADES = [
 
 /** Extensão aproximada somando o eixo BR-163 e o ramal BR-364. */
 export const EXTENSAO_APROXIMADA = "~1.500 km";
+
+/**
+ * Cidades projetadas no mapa esquemático (viewBox 1000×800 do redesign).
+ * Coordenadas x/y são do desenho, não geográficas.
+ */
+export type CidadeEsquema = {
+  nome: string;
+  x: number;
+  y: number;
+  uf: "MT" | "RO";
+  eixo: string;
+  tag: string;
+  desc: string;
+  base?: boolean;
+};
+
+export const CIDADES_ESQUEMA: CidadeEsquema[] = [
+  {
+    nome: "Guarantã do Norte",
+    x: 919,
+    y: 67,
+    uf: "MT",
+    eixo: "BR-163",
+    tag: "Norte do eixo",
+    desc: "Ponta norte do corredor BR-163 em Mato Grosso.",
+  },
+  {
+    nome: "Peixoto de Azevedo",
+    x: 907,
+    y: 99,
+    uf: "MT",
+    eixo: "BR-163",
+    tag: "Trecho norte",
+    desc: "Trecho norte do eixo, entre Sinop e Guarantã do Norte.",
+  },
+  {
+    nome: "Sinop",
+    x: 822,
+    y: 294,
+    uf: "MT",
+    eixo: "BR-163",
+    tag: "Base operacional",
+    desc: "Sede da operação Frotec — centro de coordenação técnica do corredor.",
+    base: true,
+  },
+  {
+    nome: "Sorriso",
+    x: 787,
+    y: 375,
+    uf: "MT",
+    eixo: "BR-163",
+    tag: "Trecho central",
+    desc: "Polo de grãos no eixo central da BR-163.",
+  },
+  {
+    nome: "Lucas do Rio Verde",
+    x: 756,
+    y: 436,
+    uf: "MT",
+    eixo: "BR-163",
+    tag: "Trecho central",
+    desc: "Trecho central do corredor, entre Nova Mutum e Sorriso.",
+  },
+  {
+    nome: "Nova Mutum",
+    x: 730,
+    y: 530,
+    uf: "MT",
+    eixo: "BR-163",
+    tag: "Trecho sul",
+    desc: "Trecho sul do eixo BR-163, no caminho de Cuiabá.",
+  },
+  {
+    nome: "Cuiabá",
+    x: 726,
+    y: 741,
+    uf: "MT",
+    eixo: "BR-163 / BR-364",
+    tag: "Sul do eixo",
+    desc: "Entroncamento sul: onde o eixo BR-163 encontra o ramal da BR-364.",
+  },
+  {
+    nome: "Diamantino",
+    x: 670,
+    y: 598,
+    uf: "MT",
+    eixo: "BR-364",
+    tag: "Ramal RO",
+    desc: "Início do ramal da BR-364 em direção a Rondônia.",
+  },
+  {
+    nome: "Campo Novo do Parecis",
+    x: 437,
+    y: 511,
+    uf: "MT",
+    eixo: "BR-364",
+    tag: "Ramal RO",
+    desc: "Trecho intermediário do ramal BR-364.",
+  },
+  {
+    nome: "Comodoro",
+    x: 131,
+    y: 509,
+    uf: "MT",
+    eixo: "BR-364",
+    tag: "Ramal RO",
+    desc: "Último trecho em Mato Grosso antes da divisa com Rondônia.",
+  },
+  {
+    nome: "Vilhena",
+    x: 73,
+    y: 399,
+    uf: "RO",
+    eixo: "BR-364",
+    tag: "Ponta RO",
+    desc: "Extremidade do ramal BR-364, já em Rondônia.",
+  },
+];
+
+export const POLYLINE_BR163 = "726,741 689,635 730,530 756,436 787,375 822,294 907,99 919,67";
+export const POLYLINE_BR364 = "726,741 670,598 437,511 131,509 73,399";

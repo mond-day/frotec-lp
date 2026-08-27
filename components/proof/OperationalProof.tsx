@@ -30,8 +30,8 @@ export default function OperationalProof() {
           <div className="eyebrow">Prova operacional</div>
           <h2 id="prova-title">A confiança vem do processo.</h2>
           <p style={{ marginTop: 14, maxWidth: 520 }}>
-            Demo ilustrativa do portal e do app avaliador (modelo futuro). Passe o mouse para pausar
-            a sequência de telas.
+            Portal do gestor e app do avaliador — modelo demonstrativo do que será entregue na
+            Fase B.
           </p>
         </Reveal>
 

@@ -10,19 +10,31 @@ export default function Contato() {
           <Reveal>
             <div className="eyebrow">Diagnóstico</div>
             <h2 id="contato-title">Conte como sua frota opera hoje.</h2>
-            <p style={{ marginTop: "16px", maxWidth: "440px" }}>
+            <p style={{ marginTop: 18, maxWidth: "44ch" }}>
               Com algumas informações conseguimos direcionar a conversa para os pontos que mais
               impactam sua operação.
             </p>
-            <p style={{ marginTop: "16px", maxWidth: "440px", fontSize: "14px" }}>
-              Nesta fase, a operação atende o corredor da <strong>BR-163</strong>, entre Mato Grosso
-              e Rondônia, com base em Sinop/MT.
-            </p>
+            <div className="contact-coverage">
+              <div className="contact-coverage-kicker">Cobertura desta fase</div>
+              <p>
+                Corredor da <strong>BR-163</strong>, entre Mato Grosso e Rondônia, com base em
+                Sinop/MT. Fora dessa área o contato fica registrado para a próxima expansão.
+              </p>
+            </div>
 
             <div className="contact-list">
-              <span>{CONTATO.cidade}</span>
-              <a href={CONTATO.telefoneLink}>{CONTATO.telefone}</a>
-              <a href={`mailto:${CONTATO.email}`}>{CONTATO.email}</a>
+              <div>
+                <span>Base</span>
+                {CONTATO.cidade}
+              </div>
+              <div>
+                <span>Telefone</span>
+                <a href={CONTATO.telefoneLink}>{CONTATO.telefone}</a>
+              </div>
+              <div>
+                <span>E-mail</span>
+                <a href={`mailto:${CONTATO.email}`}>{CONTATO.email}</a>
+              </div>
             </div>
           </Reveal>
 
