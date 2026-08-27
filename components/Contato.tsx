@@ -8,10 +8,10 @@ export default function Contato() {
         <div className="form-grid reveal">
           <div>
             <div className="eyebrow">Fale com a gente</div>
-            <h2>Peça uma avaliação técnica para sua frota.</h2>
+            <h2>Receba um diagnóstico gratuito da sua frota.</h2>
             <p style={{ marginTop: "16px", maxWidth: "440px" }}>
-              Preencha os dados abaixo. Nosso time entra em contato para entender o perfil da
-              frota e agendar a avaliação técnica inicial — sem compromisso.
+              Preencha os dados abaixo. Um consultor Frotec entra em contato para entender o perfil
+              da frota e mostrar onde você pode reduzir custos — sem compromisso.
             </p>
             <p style={{ marginTop: "16px", maxWidth: "440px", fontSize: "14px" }}>
               Nesta fase, a operação atende apenas o corredor da <strong>BR-163</strong>, entre

@@ -2,7 +2,10 @@ import Beneficios from "@/components/Beneficios";
 import Cobertura from "@/components/Cobertura";
 import ComoEntrar from "@/components/ComoEntrar";
 import ComoFunciona from "@/components/ComoFunciona";
+import Comparativo from "@/components/Comparativo";
 import Contato from "@/components/Contato";
+import Contrato from "@/components/Contrato";
+import Depoimentos from "@/components/Depoimentos";
 import Faq from "@/components/Faq";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -20,10 +23,13 @@ export default function Home() {
       <main>
         <Hero />
         <Riscos />
+        <Comparativo />
         <ComoFunciona />
         <Beneficios />
         <Incluso />
+        <Contrato />
         <ParaQuem />
+        <Depoimentos />
         <Cobertura />
         <Servico />
         <ComoEntrar />

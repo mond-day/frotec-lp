@@ -63,7 +63,7 @@ export default function LeadForm() {
       setMensagemEnvio(
         foraDeArea
           ? "Recebemos seus dados. Sua região ainda não é atendida, mas o contato ficou registrado para a próxima expansão."
-          : "Recebemos seus dados. Nosso time entra em contato para agendar a avaliação técnica.",
+          : "Recebemos seus dados. Nosso time entra em contato para o diagnóstico gratuito da sua frota.",
       );
       setDados(LEAD_VAZIO);
     } catch {
@@ -232,7 +232,7 @@ export default function LeadForm() {
         style={{ marginTop: "8px" }}
         disabled={enviando}
       >
-        {enviando ? "Enviando..." : "Solicitar avaliação técnica"}
+        {enviando ? "Enviando..." : "Quero Reduzir Meus Custos"}
       </button>
 
       <div

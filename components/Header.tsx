@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 const NAV_LINKS = [
   { href: "#como-funciona", label: "Como funciona" },
   { href: "#beneficios", label: "Benefícios" },
+  { href: "#depoimentos", label: "Depoimentos" },
   { href: "#cobertura", label: "Onde atuamos" },
-  { href: "#servico", label: "O serviço" },
   { href: "#faq", label: "Perguntas" },
 ];
 
@@ -50,13 +50,13 @@ export default function Header() {
               className="btn btn-primary"
               onClick={() => setMenuAberto(false)}
             >
-              Agendar avaliação
+              Falar com um Consultor
             </a>
           </li>
         </ul>
 
         <a href="#contato" className="btn btn-primary desktop-only nav-cta">
-          Agendar avaliação
+          Falar com um Consultor
         </a>
 
         <button

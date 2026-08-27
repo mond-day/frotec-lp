@@ -28,20 +28,20 @@ export default function Riscos() {
             <div className="icon-tile warn">
               <ClockIcon />
             </div>
-            <h3>Irregularidade no ARLA/SCR</h3>
+            <h3>Multas e caminhões retidos</h3>
             <p>
-              Sistemas fora de conformidade geram autuação, retenção em fiscalização e risco de
-              imobilização do veículo.
+              Sistemas de emissão (ARLA) desregulados são o caminho mais rápido para autuações
+              pesadas e cargas paradas na fiscalização. Nós monitoramos isso para você.
             </p>
           </div>
           <div className="card">
             <div className="icon-tile warn">
               <BrokenChartIcon />
             </div>
-            <h3>Manutenção sem controle</h3>
+            <h3>Orçamentos de oficina sem transparência</h3>
             <p>
-              Sem auditoria técnica, cada reparo vira uma negociação isolada — sem histórico, sem
-              padrão e sem previsibilidade de custo.
+              Sabe aquele conserto que sempre fica mais caro do que deveria? Nossa equipe de
+              engenheiros audita toda Ordem de Serviço (OS) antes de você pagar a conta.
             </p>
           </div>
         </div>

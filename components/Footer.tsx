@@ -26,7 +26,7 @@ export default function Footer() {
             </div>
             <div className="foot-col">
               <h4>Contato</h4>
-              <a href="#contato">Agendar avaliação</a>
+              <a href="#contato">Falar com um Consultor</a>
               <a href={`mailto:${CONTATO.email}`}>{CONTATO.email}</a>
               <a href={CONTATO.telefoneLink}>{CONTATO.telefone}</a>
             </div>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 780" fill="none">
+  <rect width="390" height="780" rx="36" fill="#1b2029" stroke="rgba(234,240,238,0.14)" stroke-width="2"/>
+  <rect x="130" y="18" width="130" height="28" rx="14" fill="#20262f"/>
+  <rect x="24" y="64" width="342" height="48" rx="10" fill="#20262f"/>
+  <text x="36" y="94" fill="#10E1B1" font-family="monospace" font-size="11" letter-spacing="0.1em">PORTAL FROTEC · FROTA ATIVA</text>
+  <rect x="24" y="130" width="342" height="56" rx="10" fill="#20262f" stroke="rgba(234,240,238,0.08)"/>
+  <text x="40" y="155" fill="rgba(237,243,241,0.6)" font-family="system-ui,sans-serif" font-size="13">MT-0231 CAV</text>
+  <text x="280" y="155" fill="#10E1B1" font-family="system-ui,sans-serif" font-size="12">Ativo</text>
+  <rect x="24" y="196" width="342" height="56" rx="10" fill="#20262f" stroke="rgba(234,240,238,0.08)"/>
+  <text x="40" y="221" fill="rgba(237,243,241,0.6)" font-family="system-ui,sans-serif" font-size="13">MT-0198 CAV</text>
+  <text x="220" y="221" fill="#f0a93c" font-family="system-ui,sans-serif" font-size="12">Em manutenção</text>
+  <rect x="24" y="262" width="342" height="56" rx="10" fill="#20262f" stroke="rgba(234,240,238,0.08)"/>
+  <text x="40" y="287" fill="rgba(237,243,241,0.6)" font-family="system-ui,sans-serif" font-size="13">MT-0355 CAV</text>
+  <text x="180" y="287" fill="#2D8CFF" font-family="system-ui,sans-serif" font-size="12">Aguardando OS</text>
+  <rect x="24" y="328" width="342" height="56" rx="10" fill="#20262f" stroke="rgba(234,240,238,0.08)"/>
+  <text x="40" y="353" fill="rgba(237,243,241,0.6)" font-family="system-ui,sans-serif" font-size="13">MT-0402 CAV</text>
+  <text x="210" y="353" fill="rgba(237,243,241,0.32)" font-family="system-ui,sans-serif" font-size="12">Avaliação agendada</text>
+  <rect x="24" y="410" width="342" height="120" rx="10" fill="#151820" stroke="rgba(16,225,177,0.2)" stroke-dasharray="4 4"/>
+  <text x="195" y="465" text-anchor="middle" fill="rgba(237,243,241,0.32)" font-family="system-ui,sans-serif" font-size="12">Histórico · Laudos · Faturas</text>
+  <rect x="24" y="560" width="160" height="80" rx="10" fill="#20262f"/>
+  <rect x="206" y="560" width="160" height="80" rx="10" fill="#20262f"/>
+  <rect x="24" y="660" width="342" height="88" rx="10" fill="rgba(16,225,177,0.08)" stroke="rgba(16,225,177,0.25)"/>
+  <text x="195" y="710" text-anchor="middle" fill="#10E1B1" font-family="system-ui,sans-serif" font-size="14" font-weight="600">18 veículos monitorados</text>
+</svg>

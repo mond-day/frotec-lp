@@ -1,4 +1,5 @@
 import { CheckIcon } from "./icons";
+import HeroBackground from "./HeroBackground";
 
 const ITENS_LAUDO = [
   { area: "Sistema ARLA/SCR", status: "Regular" },
@@ -10,6 +11,7 @@ const ITENS_LAUDO = [
 export default function Hero() {
   return (
     <section className="hero">
+      <HeroBackground />
       <div className="blueprint" />
       <svg
         className="hero-trails"
@@ -37,20 +39,19 @@ export default function Hero() {
 
       <div className="wrap hero-grid">
         <div className="hero-inner">
-          <div className="eyebrow">Convênio de gestão técnica de frotas</div>
+          <div className="eyebrow">Gestão técnica que coloca caminhão na estrada</div>
           <h1>
-            Sua frota de caminhões,
+            Sua frota sempre rodando.
             <br />
-            sob gestão técnica constante.
+            Fim dos custos surpresa com manutenção.
           </h1>
           <p className="lead">
-            A Frotec une avaliação técnica, manutenção preventiva programada e uma rede de
-            oficinas credenciadas para reduzir falhas, paradas e custos inesperados na sua frota
-            diesel — com auditoria técnica em cada serviço.
+            Avaliamos, prevenimos e auditamos cada serviço da sua frota diesel. Você foca em fechar
+            fretes — nós garantimos que o caminhão chegue ao destino.
           </p>
           <div className="hero-cta">
             <a href="#contato" className="btn btn-primary">
-              Agendar avaliação técnica
+              Receber Diagnóstico Gratuito
             </a>
             <a href="#como-funciona" className="btn btn-ghost">
               Ver como funciona

@@ -1,4 +1,5 @@
 import { CheckIcon } from "./icons";
+import { MotionReveal } from "./MotionReveal";
 
 const RECURSOS = [
   "Status individual de cada caminhão da frota",
@@ -8,18 +9,11 @@ const RECURSOS = [
   "Faturas e situação dos pagamentos",
 ];
 
-const VEICULOS = [
-  { placa: "MT-0231 CAV", status: "Ativo" },
-  { placa: "MT-0198 CAV", status: "Em manutenção" },
-  { placa: "MT-0355 CAV", status: "Aguardando aprovação de OS" },
-  { placa: "MT-0402 CAV", status: "Avaliação agendada" },
-];
-
 export default function Portal() {
   return (
     <section id="portal">
-      <div className="wrap grid-2 align-center">
-        <div className="reveal">
+      <div className="wrap grid-2 align-center portal-grid">
+        <MotionReveal>
           <div className="eyebrow">Portal do cliente</div>
           <h2>Acompanhe cada caminhão, do checklist à manutenção.</h2>
           <p style={{ marginTop: "16px" }}>
@@ -36,32 +30,39 @@ export default function Portal() {
             ))}
           </ul>
           <a href="#contato" className="btn btn-primary" style={{ marginTop: "28px" }}>
-            Agendar avaliação técnica
+            Falar com um Consultor
           </a>
-        </div>
+        </MotionReveal>
 
-        <div className="eval-card reveal" style={{ transitionDelay: ".15s" }}>
-          <div className="eval-top">
-            <span className="eval-tag">Portal Frotec · Frota ativa</span>
-            <span className="eval-id">18 veículos</span>
-          </div>
-          {VEICULOS.map((veiculo) => (
-            <div className="eval-row" key={veiculo.placa}>
-              <span>{veiculo.placa}</span>
-              <span className="eval-ok">
-                <CheckIcon size={13} strokeWidth={3} />
-                {veiculo.status}
-              </span>
+        <MotionReveal className="device-mockup-wrap" delay={0.15}>
+          <div className="device-mockup">
+            <div className="device-laptop">
+              <div className="device-laptop-screen">
+                <img
+                  src="/portal-mockup.svg"
+                  alt="Interface do portal Frotec+ no desktop"
+                  className="device-screen-img"
+                  width={780}
+                  height={480}
+                />
+              </div>
+              <div className="device-laptop-base" aria-hidden="true" />
             </div>
-          ))}
-          <div className="eval-result">
-            <span style={{ fontSize: "12px", color: "var(--ink-mut)" }}>Última atualização</span>
-            <span className="risk-badge">Há 4 min</span>
+            <div className="device-phone">
+              <div className="device-phone-notch" aria-hidden="true" />
+              <img
+                src="/portal-mockup.svg"
+                alt="Interface do portal Frotec+ no celular"
+                className="device-screen-img"
+                width={390}
+                height={780}
+              />
+            </div>
           </div>
-          <div className="eval-caption">
-            Atualizado a cada nova ordem de serviço ou avaliação
-          </div>
-        </div>
+          <p className="device-caption">
+            Substitua por screenshot ou vídeo MP4 real do portal quando disponível.
+          </p>
+        </MotionReveal>
       </div>
     </section>
   );

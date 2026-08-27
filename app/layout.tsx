@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Chakra_Petch, IBM_Plex_Mono, Inter } from "next/font/google";
+import LenisProvider from "@/components/LenisProvider";
 import RevealObserver from "@/components/RevealObserver";
+import "lenis/dist/lenis.css";
 import "./globals.css";
 
 const chakraPetch = Chakra_Petch({
@@ -21,9 +23,9 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Frotec | Convênio de gestão técnica de frotas diesel",
+  title: "Frotec+ | Sua frota sempre rodando",
   description:
-    "Gestão técnica recorrente para frotas de caminhões diesel: avaliação técnica, manutenção preventiva programada e rede de oficinas credenciadas no corredor da BR-163, eixo Mato Grosso–Rondônia.",
+    "Gestão técnica recorrente para frotas de caminhões diesel: prevenção, auditoria de OS e rede credenciada no corredor da BR-163, eixo Mato Grosso–Rondônia.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -33,6 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${chakraPetch.variable} ${inter.variable} ${ibmPlexMono.variable}`}
     >
       <body>
+        <LenisProvider />
         {children}
         <RevealObserver />
       </body>

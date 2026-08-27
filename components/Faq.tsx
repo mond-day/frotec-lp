@@ -4,6 +4,16 @@ import { useEffect, useId, useRef, useState } from "react";
 
 const PERGUNTAS = [
   {
+    pergunta: "Eu vou precisar demitir meu gerente de frota atual?",
+    resposta:
+      "Não. O Frotec+ é a ferramenta que dá superpoderes ao seu gerente: portal com status em tempo real, auditoria técnica de toda OS, rede credenciada e laudos organizados. Ele continua no comando da operação — com menos incêndio para apagar e mais dados para decidir.",
+  },
+  {
+    pergunta: "Qual o retorno sobre o investimento (ROI) médio?",
+    resposta:
+      "Varia conforme o porte e o perfil da frota, mas clientes reportam redução significativa em paradas não planejadas, multas por emissão e peças superfaturadas. Em muitos casos, uma única parada evitada já paga meses de convênio. Na proposta, detalhamos a economia estimada com base no diagnóstico da sua frota.",
+  },
+  {
     pergunta: "O convênio Frotec é um seguro?",
     resposta:
       "Não. A Frotec presta um serviço de gestão técnica e consultoria em manutenção de frotas: avaliação técnica, manutenção preventiva programada, diagnóstico e acesso à rede credenciada. Não é seguro, não é garantia estendida e não constitui operação securitária.",

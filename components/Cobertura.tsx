@@ -1,4 +1,4 @@
-import CoverageMap from "./CoverageMap";
+import CoverageMapClient from "./CoverageMapClient";
 import { InfoIcon } from "./icons";
 import { EXTENSAO_APROXIMADA } from "@/lib/cobertura";
 
@@ -17,7 +17,7 @@ export default function Cobertura() {
         </div>
 
         <div className="map-card reveal">
-          <CoverageMap />
+          <CoverageMapClient />
           <div className="map-legend">
             <div className="map-legend-item">
               <span className="dot dot-primary" />

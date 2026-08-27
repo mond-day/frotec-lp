@@ -11,9 +11,24 @@ oficina e os modulos da plataforma sao da Fase B.
 
 - Next.js 16 (App Router) + React 19 + TypeScript
 - CSS global proprio (`app/globals.css`), sem framework de CSS
+- Framer Motion (animacoes de entrada) + Lenis (smooth scroll)
 - Leaflet para o mapa de cobertura
 - Nodemailer para enviar os leads por SMTP
 - Build `standalone` para rodar em container Node
+
+## Scripts de abertura rapida
+
+Na pasta `scripts/` ha atalhos para subir o site localmente sem usar o terminal manualmente:
+
+| Arquivo | Plataforma | Uso |
+| --- | --- | --- |
+| `abrir-site.command` | macOS | Duplo-clique (precisa de `chmod +x` uma vez) |
+| `abrir-site.bat` | Windows | Duplo-clique no Explorer |
+| `abrir-site.ps1` | Windows | `.\scripts\abrir-site.ps1` no PowerShell |
+
+Todos fazem: `cd` na raiz do projeto, `npm install` se `node_modules` nao existir, `npm run dev` e abrem http://localhost:3000 no navegador.
+
+No Windows, `.exe` nao foi gerado (exigiria compilador). O `.bat` funciona no duplo-clique; use o `.ps1` se preferir PowerShell.
 
 ## Rodando localmente
 
@@ -123,7 +138,8 @@ lib/
 ```
 
 Componentes de secao sao Server Components. Sao Client Components apenas: `Header`,
-`Faq`, `LeadForm`, `CoverageMap` e `RevealObserver`.
+`Faq`, `LeadForm`, `CoverageMap`, `RevealObserver`, `LenisProvider`, `HeroBackground` e
+`MotionReveal`.
 
 ## Deploy (Portainer Swarm + Traefik)
 
