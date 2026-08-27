@@ -20,13 +20,13 @@ export default function Footer() {
               <h4>Navegação</h4>
               <a href="#como-funciona">Como funciona</a>
               <a href="#beneficios">Benefícios</a>
-              <a href="#cobertura">Onde atuamos</a>
-              <a href="#servico">O serviço</a>
-              <a href="#faq">Perguntas</a>
+              <a href="#cobertura">Cobertura</a>
+              <a href="#escopo">Escopo</a>
+              <a href="#faq">FAQ</a>
             </div>
             <div className="foot-col">
               <h4>Contato</h4>
-              <a href="#contato">Falar com um Consultor</a>
+              <a href="#contato">Diagnosticar minha frota</a>
               <a href={`mailto:${CONTATO.email}`}>{CONTATO.email}</a>
               <a href={CONTATO.telefoneLink}>{CONTATO.telefone}</a>
             </div>

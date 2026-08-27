@@ -29,6 +29,17 @@ export const OPCOES_ROTA = [
 
 export type ValorRota = (typeof OPCOES_ROTA)[number]["valor"];
 
+export const OPCOES_PROBLEMA = [
+  { valor: "paradas", rotulo: "Paradas inesperadas" },
+  { valor: "preventiva", rotulo: "Preventiva desorganizada" },
+  { valor: "orcamento", rotulo: "Orçamento de oficina" },
+  { valor: "emissoes", rotulo: "ARLA/SCR/emissões" },
+  { valor: "acompanhamento", rotulo: "Acompanhamento da frota" },
+  { valor: "outro", rotulo: "Outro" },
+] as const;
+
+export type ValorProblema = (typeof OPCOES_PROBLEMA)[number]["valor"];
+
 export type DadosLead = {
   nome: string;
   empresa: string;
@@ -37,6 +48,7 @@ export type DadosLead = {
   email: string;
   veiculos: string;
   rota: string;
+  problema: string;
   mensagem: string;
 };
 
@@ -48,11 +60,16 @@ export const LEAD_VAZIO: DadosLead = {
   email: "",
   veiculos: "",
   rota: "",
+  problema: "",
   mensagem: "",
 };
 
 export function buscarRota(valor: string) {
   return OPCOES_ROTA.find((opcao) => opcao.valor === valor);
+}
+
+export function buscarProblema(valor: string) {
+  return OPCOES_PROBLEMA.find((opcao) => opcao.valor === valor);
 }
 
 /** Formata progressivamente: (66) 99999-0000 */
@@ -73,41 +90,51 @@ export type ErrosLead = Partial<Record<keyof DadosLead, string>>;
  * Validacao usada no formulario e repetida na rota /api/lead, para o servidor
  * nao confiar no que chega do navegador.
  */
-export function validarLead(dados: DadosLead): ErrosLead {
+export function validarLead(dados: DadosLead, etapa?: 1 | 2): ErrosLead {
   const erros: ErrosLead = {};
+  const validarTudo = etapa == null;
 
-  if (dados.nome.trim().length < 2) {
-    erros.nome = "Informe seu nome.";
+  if (validarTudo || etapa === 1) {
+    const veiculos = Number(dados.veiculos);
+    if (!Number.isInteger(veiculos) || veiculos < 1 || veiculos > 10000) {
+      erros.veiculos = "Informe a quantidade de caminhões da frota.";
+    }
+
+    if (!buscarRota(dados.rota)) {
+      erros.rota = "Selecione a região de operação da frota.";
+    }
+
+    if (!buscarProblema(dados.problema)) {
+      erros.problema = "Selecione o maior problema hoje.";
+    }
   }
 
-  if (dados.empresa.trim().length < 2) {
-    erros.empresa = "Informe o nome da empresa.";
-  }
+  if (validarTudo || etapa === 2) {
+    if (dados.nome.trim().length < 2) {
+      erros.nome = "Informe seu nome.";
+    }
 
-  if (!cnpjValido(dados.cnpj)) {
-    erros.cnpj = "CNPJ inválido. Confira os números digitados.";
-  }
+    if (dados.empresa.trim().length < 2) {
+      erros.empresa = "Informe o nome da empresa.";
+    }
 
-  const digitosTelefone = apenasDigitos(dados.whatsapp);
-  if (digitosTelefone.length < 10 || digitosTelefone.length > 11) {
-    erros.whatsapp = "Informe o WhatsApp com DDD.";
-  }
+    if (dados.cnpj.trim() && !cnpjValido(dados.cnpj)) {
+      erros.cnpj = "CNPJ inválido. Confira os números digitados.";
+    }
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(dados.email.trim())) {
-    erros.email = "Informe um e-mail válido.";
-  }
+    const digitosTelefone = apenasDigitos(dados.whatsapp);
+    if (digitosTelefone.length < 10 || digitosTelefone.length > 11) {
+      erros.whatsapp = "Informe o WhatsApp com DDD.";
+    }
 
-  const veiculos = Number(dados.veiculos);
-  if (!Number.isInteger(veiculos) || veiculos < 1 || veiculos > 10000) {
-    erros.veiculos = "Informe a quantidade de caminhões da frota.";
-  }
+    const email = dados.email.trim();
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      erros.email = "Informe um e-mail válido.";
+    }
 
-  if (!buscarRota(dados.rota)) {
-    erros.rota = "Selecione a região de operação da frota.";
-  }
-
-  if (dados.mensagem.length > 1000) {
-    erros.mensagem = "Mensagem muito longa (máximo de 1000 caracteres).";
+    if (dados.mensagem.length > 1000) {
+      erros.mensagem = "Mensagem muito longa (máximo de 1000 caracteres).";
+    }
   }
 
   return erros;
@@ -130,6 +157,8 @@ export type PayloadLead = {
   rota: string;
   rota_label: string;
   fora_area: boolean;
+  problema: string;
+  problema_label: string;
   mensagem: string;
   origem: string;
   data_envio: string;
@@ -137,6 +166,7 @@ export type PayloadLead = {
 
 export function montarPayload(dados: DadosLead): PayloadLead {
   const rota = buscarRota(dados.rota);
+  const problema = buscarProblema(dados.problema);
 
   return {
     nome: dados.nome.trim(),
@@ -148,6 +178,8 @@ export function montarPayload(dados: DadosLead): PayloadLead {
     rota: dados.rota,
     rota_label: rota?.rotulo ?? "",
     fora_area: rota?.foraDeArea ?? false,
+    problema: dados.problema,
+    problema_label: problema?.rotulo ?? "",
     mensagem: dados.mensagem.trim(),
     origem: "site-frotec",
     data_envio: new Date().toISOString(),

@@ -71,12 +71,13 @@ function formatarData(iso: string): string {
 function camposDoLead(lead: PayloadLead): [string, string][] {
   return [
     ["Empresa", lead.empresa],
-    ["CNPJ", formatarCnpj(lead.cnpj)],
+    ["CNPJ", lead.cnpj ? formatarCnpj(lead.cnpj) : "—"],
     ["Responsável", lead.nome],
     ["WhatsApp", formatarTelefone(lead.whatsapp)],
-    ["E-mail", lead.email],
+    ["E-mail", lead.email || "—"],
     ["Frota", `${lead.veiculos} ${lead.veiculos === 1 ? "caminhão" : "caminhões"}`],
     ["Região", lead.rota_label],
+    ["Maior problema", lead.problema_label || "—"],
     ["Mensagem", lead.mensagem || "—"],
     ["Recebido em", formatarData(lead.data_envio)],
   ];
@@ -136,7 +137,7 @@ export async function enviarLead(lead: PayloadLead, config: ConfigSmtp): Promise
       from: { name: "Site Frotec", address: config.remetente },
       to: config.destinatarios,
       // Deixa o comercial responder ao lead direto pelo "Responder".
-      replyTo: lead.email,
+      ...(lead.email ? { replyTo: lead.email } : {}),
       subject: montarAssunto(lead),
       text: montarTexto(lead),
       html: montarHtml(lead),

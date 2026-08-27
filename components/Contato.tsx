@@ -1,21 +1,22 @@
-import LeadForm from "./LeadForm";
+import LeadQualificationForm from "@/components/conversion/LeadQualificationForm";
+import Reveal from "@/components/motion/Reveal";
 import { CONTATO } from "@/lib/contato";
 
 export default function Contato() {
   return (
-    <section id="contato" className="cta-section">
+    <section id="contato" className="cta-section" aria-labelledby="contato-title">
       <div className="wrap">
-        <div className="form-grid reveal">
-          <div>
-            <div className="eyebrow">Fale com a gente</div>
-            <h2>Receba um diagnóstico gratuito da sua frota.</h2>
+        <div className="form-grid">
+          <Reveal>
+            <div className="eyebrow">Diagnóstico</div>
+            <h2 id="contato-title">Conte como sua frota opera hoje.</h2>
             <p style={{ marginTop: "16px", maxWidth: "440px" }}>
-              Preencha os dados abaixo. Um consultor Frotec entra em contato para entender o perfil
-              da frota e mostrar onde você pode reduzir custos — sem compromisso.
+              Com algumas informações conseguimos direcionar a conversa para os pontos que mais
+              impactam sua operação.
             </p>
             <p style={{ marginTop: "16px", maxWidth: "440px", fontSize: "14px" }}>
-              Nesta fase, a operação atende apenas o corredor da <strong>BR-163</strong>, entre
-              Mato Grosso e Rondônia, com base em Sinop/MT.
+              Nesta fase, a operação atende o corredor da <strong>BR-163</strong>, entre Mato Grosso
+              e Rondônia, com base em Sinop/MT.
             </p>
 
             <div className="contact-list">
@@ -23,9 +24,9 @@ export default function Contato() {
               <a href={CONTATO.telefoneLink}>{CONTATO.telefone}</a>
               <a href={`mailto:${CONTATO.email}`}>{CONTATO.email}</a>
             </div>
-          </div>
+          </Reveal>
 
-          <LeadForm />
+          <LeadQualificationForm />
         </div>
       </div>
     </section>

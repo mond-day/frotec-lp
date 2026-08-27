@@ -1,0 +1,79 @@
+/* Typography — Barlow Condensed (titles) + Manrope (body) + IBM Plex Mono (data) */
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-title), sans-serif;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  font-weight: 700;
+  color: inherit;
+}
+
+h1 {
+  font-size: clamp(36px, 7vw, 72px);
+  letter-spacing: -0.025em;
+}
+
+h2 {
+  font-size: clamp(28px, 4.2vw, 48px);
+}
+
+h3 {
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+h4 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+p {
+  color: var(--ink-mut);
+  line-height: 1.7;
+  font-size: 16.5px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono), monospace;
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 18px;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 16px;
+  height: 1px;
+  background: currentColor;
+}
+
+.theme-light .eyebrow {
+  color: #0a7a5f;
+}
+
+.lead {
+  font-size: clamp(16px, 1.5vw, 18px);
+  max-width: 36em;
+}
+
+.mono {
+  font-family: var(--font-mono), monospace;
+}
+
+.section-kicker {
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}

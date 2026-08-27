@@ -4,7 +4,7 @@ import Lenis from "lenis";
 import { useEffect } from "react";
 
 /**
- * Rolagem suave global. Respeita prefers-reduced-motion.
+ * Rolagem suave global. Respeita prefers-reduced-motion (Lenis + check local).
  */
 export default function LenisProvider() {
   useEffect(() => {
@@ -15,6 +15,7 @@ export default function LenisProvider() {
     const lenis = new Lenis({
       lerp: 0.1,
       smoothWheel: true,
+      // Âncoras #contato / #como-funciona continuam funcionando via scroll nativo + Lenis
     });
 
     let frameId = 0;

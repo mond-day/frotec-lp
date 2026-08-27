@@ -1,0 +1,48 @@
+/* Frotec — design tokens (Industrial Editorial / Road Intelligence) */
+
+:root {
+  /* Surfaces */
+  --bg: #12151c;
+  --bg-1: #181c24;
+  --bg-2: #1e2430;
+  --bg-elevated: #242b38;
+  --surface-light: #ece8e1;
+  --surface-warm: #e4dfd6;
+  --surface-paper: #f4f1eb;
+
+  /* Text */
+  --ink: #edf3f1;
+  --ink-mut: rgba(237, 243, 241, 0.68);
+  --ink-dim: rgba(237, 243, 241, 0.38);
+  --ink-on-light: #1a1f28;
+  --ink-mut-on-light: rgba(26, 31, 40, 0.68);
+  --ink-dim-on-light: rgba(26, 31, 40, 0.45);
+
+  /* Brand signals */
+  --primary: #10e1b1;
+  --primary-ink: #08211b;
+  --primary-glow: rgba(16, 225, 177, 0.16);
+  --trail: #2d8cff;
+  --amber: #f0a93c;
+  --danger: #ff6b6b;
+
+  /* Borders */
+  --line: rgba(234, 240, 238, 0.08);
+  --line-2: rgba(234, 240, 238, 0.14);
+  --line-on-light: rgba(26, 31, 40, 0.1);
+  --line-strong-on-light: rgba(26, 31, 40, 0.18);
+
+  /* Geometry */
+  --radius: 12px;
+  --radius-lg: 20px;
+  --radius-sm: 8px;
+  --maxw: 1180px;
+  --header-h: 72px;
+
+  /* Motion */
+  --motion-fast: 180ms;
+  --motion-base: 420ms;
+  --motion-slow: 720ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
