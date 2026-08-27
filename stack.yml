@@ -1,11 +1,17 @@
-# Exemplo de stack para Portainer / Docker Swarm com Traefik.
+# Stack Swarm para Portainer + Traefik.
 #
-# Antes de subir:
-#   1. Construa e publique a imagem: docker build -t SEU-REGISTRY/frotec-lp:latest . && docker push ...
-#   2. Ajuste o dominio nas labels do Traefik.
-#   3. Defina as variaveis de SMTP no ambiente da stack no Portainer.
+# Passos:
+#   1. docker build -t SEU-REGISTRY/frotec-lp:latest .
+#      (ou .\scripts\build-image.ps1 -Tag SEU-REGISTRY/frotec-lp:latest)
+#   2. docker push SEU-REGISTRY/frotec-lp:latest
+#   3. No Portainer: Stacks > Add stack > cole este arquivo.
+#   4. Troque SEU-REGISTRY pela URL real do registry (a imagem precisa
+#      ser puxavel pelos nos do swarm).
+#   5. Confira o dominio nas labels do Traefik.
+#   6. Preencha as variaveis SMTP no ambiente da stack (ver .env.example).
 #
-# A rede do Traefik precisa existir e ser overlay/attachable.
+# A rede traefik-public precisa existir (overlay) e o Traefik ja precisa
+# estar nela. Este arquivo nao cria o Traefik.
 
 version: "3.8"
 
@@ -22,7 +28,7 @@ services:
       # arquivo, o que exige adaptar lerConfigSmtp em lib/email.ts para ler o
       # conteudo do arquivo apontado por uma variavel SMTP_PASS_FILE.
       SMTP_HOST: ${SMTP_HOST}
-      SMTP_PORT: ${SMTP_PORT}
+      SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_SECURE: ${SMTP_SECURE}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASS: ${SMTP_PASS}

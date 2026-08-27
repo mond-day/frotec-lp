@@ -143,16 +143,90 @@ Componentes de secao sao Server Components. Sao Client Components apenas: `Heade
 
 ## Deploy (Portainer Swarm + Traefik)
 
+Pacote de producao ja neste repositorio — nao precisa de arquivo extra:
+
+| Arquivo | Papel |
+| --- | --- |
+| `Dockerfile` | Imagem Node 22 Alpine com saida `standalone` do Next |
+| `stack.yml` | Stack Swarm (2 replicas) + labels Traefik |
+| `.env.example` | Variaveis SMTP (lidas em runtime, sem rebuild) |
+| `scripts/build-image.ps1` | Atalho Windows para o `docker build` |
+
+O swarm precisa de um **registry** de verdade (privado ou publico) e da rede overlay
+`traefik-public` com o Traefik ja rodando. Este repo nao cria o Traefik nem o registry.
+Troque o placeholder `SEU-REGISTRY` pela URL real (ex.: `ghcr.io/mond-day` ou o registry
+interno da empresa). O dominio de exemplo nas labels e `www.frotec.com.br`.
+
+### 1. Construir a imagem
+
+Na raiz do repo. O build precisa de rede: o `next/font` baixa as fontes do Google e as
+embute na imagem.
+
 ```bash
-docker build -t frotec-lp:latest .
+docker build -t SEU-REGISTRY/frotec-lp:latest .
 ```
 
-`stack.yml` na raiz e um exemplo de stack para o Portainer. Ajuste o dominio nas labels do
-Traefik e defina as variaveis de SMTP no ambiente do servico.
+No Windows PowerShell:
+
+```powershell
+.\scripts\build-image.ps1 -Tag SEU-REGISTRY/frotec-lp:latest
+```
+
+### 2. Publicar no registry
+
+```bash
+docker push SEU-REGISTRY/frotec-lp:latest
+```
+
+Os nos do swarm precisam conseguir puxar essa imagem. Se o registry for privado, faca
+`docker login` em cada no (ou use o mecanismo de registry do Portainer).
+
+### 3. Colar a stack no Portainer
+
+1. Portainer > **Stacks** > **Add stack**
+2. Nome sugerido: `frotec-lp`
+3. Cole o conteudo de `stack.yml` (Web editor) — ou aponte o Git deste repo se o Portainer
+   ja clona o projeto
+4. Confirme que `image:` usa a **mesma tag** publicada no passo 2
+5. Confira o dominio `www.frotec.com.br` nas labels do Traefik
+6. Em **Environment variables** da stack, preencha as variaveis SMTP (passo 4)
+7. Deploy
+
+A rede `traefik-public` precisa existir (overlay/attachable, conforme o Traefik da casa).
+Se o deploy falhar com "network traefik-public not found", a stack do Traefik ainda nao
+esta no swarm — isso nao se resolve neste repositorio.
+
+### 4. Preencher SMTP no Portainer
+
+Copie os nomes de `.env.example`. Nao coloque senha no `stack.yml` versionado.
+
+Os `${SMTP_HOST}` etc. do YAML sao interpolados com as Environment variables da stack
+no momento do deploy.
+
+| Variavel | Obrigatoria | Descricao |
+| --- | --- | --- |
+| `SMTP_HOST` | sim | Servidor de saida do e-mail institucional |
+| `SMTP_PORT` | nao (padrao 587) | 587 com STARTTLS ou 465 com TLS direto |
+| `SMTP_SECURE` | nao | `true` forca TLS direto. Vazio = `true` so na porta 465 |
+| `SMTP_USER` | sim | Caixa que autentica no servidor |
+| `SMTP_PASS` | sim | Senha da caixa. Com 2FA, use senha de aplicativo |
+| `LEAD_EMAIL_TO` | sim | Quem recebe os leads. Aceita varios, separados por virgula |
+| `LEAD_EMAIL_FROM` | nao | Remetente. Vazio = o proprio `SMTP_USER` |
+
+Trocar SMTP depois do go-live: edite as variaveis no Portainer e faca **Update the stack**.
+Nao precisa rebuildar a imagem.
 
 Atencao: `SMTP_PASS` fica visivel em texto para quem abre a stack no Portainer. Se isso for um
 problema, o proximo passo e um Docker secret montado em arquivo, o que exige adaptar
 `lerConfigSmtp` em `lib/email.ts` para ler o conteudo do arquivo apontado por `SMTP_PASS_FILE`.
+
+### 5. Conferir depois do deploy
+
+- O Traefik deve emitir certificado Let's Encrypt para `www.frotec.com.br`
+- Abra o site e envie um lead de teste
+- Sem SMTP preenchido o site abre, mas o formulario responde 503
+- Se o SMTP estiver errado, a rota responde 502 e o lead vai para o log do container
+  (`[lead] Conteudo do lead perdido: {...}`)
 
 ## Pendencias de conteudo
 
