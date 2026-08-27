@@ -160,7 +160,7 @@ dessa imagem. Nao e preciso construir nem fazer push na maquina local.
 O repositorio e **privado**, entao o pacote no GitHub Container Registry tambem e privado.
 Sem um registry cadastrado no Portainer (PAT com `read:packages`), os nos do swarm nao
 conseguem puxar a imagem. A rede overlay `traefik-public` com o Traefik ja precisa existir
-— este repo nao cria o Traefik. O dominio nas labels e `www.frotec.com.br`.
+— este repo nao cria o Traefik. O dominio nas labels e `frotec.sondercorp.com.br`.
 
 `latest` e mutavel: cada push na `main` a substitui. Para pin, use a tag SHA no `stack.yml`
 (`ghcr.io/mond-day/frotec-lp:<sha>`).
@@ -212,7 +212,7 @@ em cada no do swarm.
 3. Cole o conteudo de `stack.yml` (Web editor) — ou aponte o Git deste repo se o Portainer
    ja clona o projeto
 4. Confirme que `image:` aponta para `ghcr.io/mond-day/frotec-lp:latest` (ja vem assim)
-5. Confira o dominio `www.frotec.com.br` nas labels do Traefik
+5. Confira o dominio `frotec.sondercorp.com.br` nas labels do Traefik
 6. Em **Environment variables** da stack, preencha as variaveis SMTP (passo 4)
 7. Deploy. Depois de cada push na `main`, faca **Update the stack** (Pull and
    redeploy) para os nos puxarem o novo `latest`.
@@ -247,7 +247,7 @@ problema, o proximo passo e um Docker secret montado em arquivo, o que exige ada
 
 ### 5. Conferir depois do deploy
 
-- O Traefik deve emitir certificado Let's Encrypt para `www.frotec.com.br`
+- O Traefik deve emitir certificado Let's Encrypt para `frotec.sondercorp.com.br`
 - Abra o site e envie um lead de teste
 - Sem SMTP preenchido o site abre, mas o formulario responde 503
 - Se o SMTP estiver errado, a rota responde 502 e o lead vai para o log do container

@@ -60,7 +60,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.http.routers.frotec-lp.rule=Host(`www.frotec.com.br`)
+        - traefik.http.routers.frotec-lp.rule=Host(`frotec.sondercorp.com.br`)
         - traefik.http.routers.frotec-lp.entrypoints=websecure
         - traefik.http.routers.frotec-lp.tls=true
         - traefik.http.routers.frotec-lp.tls.certresolver=letsencrypt
