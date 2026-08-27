@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
 
 const NAV_LINKS = [
@@ -15,6 +15,8 @@ export default function SiteHeader() {
   const [menuAberto, setMenuAberto] = useState(false);
   const [rolou, setRolou] = useState(false);
   const [mostrarCtaMobile, setMostrarCtaMobile] = useState(false);
+  const menuId = useId();
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const aoRolar = () => {
@@ -33,18 +35,35 @@ export default function SiteHeader() {
   }, [mostrarCtaMobile]);
 
   useEffect(() => {
+    document.body.classList.toggle("menu-open", menuAberto);
+    return () => document.body.classList.remove("menu-open");
+  }, [menuAberto]);
+
+  useEffect(() => {
     if (!menuAberto) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setMenuAberto(false);
     };
+    const onPointer = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as Node;
+      if (navRef.current && !navRef.current.contains(target)) {
+        setMenuAberto(false);
+      }
+    };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onPointer);
+    document.addEventListener("touchstart", onPointer);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onPointer);
+      document.removeEventListener("touchstart", onPointer);
+    };
   }, [menuAberto]);
 
   return (
     <>
       <header className={rolou ? "scrolled" : undefined}>
-        <nav>
+        <nav ref={navRef}>
           <a href="#topo" className="brand" aria-label="Frotec — início">
             <Image
               className="brand-logo"
@@ -56,7 +75,7 @@ export default function SiteHeader() {
             />
           </a>
 
-          <ul className={`nav-links${menuAberto ? " open" : ""}`}>
+          <ul id={menuId} className={`nav-links${menuAberto ? " open" : ""}`}>
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <a href={link.href} onClick={() => setMenuAberto(false)}>
@@ -73,7 +92,7 @@ export default function SiteHeader() {
                   track("hero_cta_click", { source: "nav_mobile" });
                 }}
               >
-                Diagnosticar minha frota
+                Avaliar minha frota
               </a>
             </li>
           </ul>
@@ -83,7 +102,7 @@ export default function SiteHeader() {
             className="btn btn-primary desktop-only nav-cta"
             onClick={() => track("hero_cta_click", { source: "nav" })}
           >
-            Diagnosticar minha frota
+            Avaliar minha frota
           </a>
 
           <button
@@ -91,6 +110,7 @@ export default function SiteHeader() {
             className="burger"
             aria-label={menuAberto ? "Fechar menu" : "Abrir menu"}
             aria-expanded={menuAberto}
+            aria-controls={menuId}
             onClick={() => setMenuAberto((aberto) => !aberto)}
           >
             {menuAberto ? "\u2715" : "\u2630"}

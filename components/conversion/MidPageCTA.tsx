@@ -18,7 +18,7 @@ export default function MidPageCTA() {
             className="btn btn-primary"
             onClick={() => track("hero_cta_click", { source: "mid_cta" })}
           >
-            Quero avaliar minha frota
+            Avaliar minha frota
           </a>
         </Reveal>
       </div>

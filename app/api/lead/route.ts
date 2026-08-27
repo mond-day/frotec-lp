@@ -3,6 +3,7 @@ import {
   CAMPO_ISCA,
   LEAD_VAZIO,
   montarPayload,
+  normalizarProblemas,
   validarLead,
   type DadosLead,
 } from "@/lib/lead";
@@ -19,15 +20,22 @@ import {
 // O nodemailer abre socket TCP, o que so existe no runtime Node.
 export const runtime = "nodejs";
 
-/** Garante que todo campo esperado chegue como string, venha o que vier no corpo. */
+/** Garante que todo campo esperado chegue tipado, venha o que vier no corpo. */
 function normalizar(corpo: unknown): DadosLead {
   const bruto = (corpo ?? {}) as Record<string, unknown>;
-  const dados = { ...LEAD_VAZIO };
+  const dados: DadosLead = { ...LEAD_VAZIO, problemas: [] };
 
   for (const campo of Object.keys(LEAD_VAZIO) as (keyof DadosLead)[]) {
+    if (campo === "problemas") continue;
     const valor = bruto[campo];
     dados[campo] = typeof valor === "string" ? valor : valor == null ? "" : String(valor);
   }
+
+  // Aceita `problemas` (array) ou legado `problema` (string).
+  const problemasBrutos =
+    bruto.problemas ??
+    (typeof bruto.problema === "string" ? [bruto.problema] : []);
+  dados.problemas = normalizarProblemas(problemasBrutos);
 
   return dados;
 }

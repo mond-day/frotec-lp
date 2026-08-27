@@ -45,4 +45,9 @@
   --motion-slow: 720ms;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Interaction system */
+  --interaction-lift: -3px;
+  --interaction-scale: 1.015;
+  --interaction-duration: 220ms;
 }

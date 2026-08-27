@@ -7,8 +7,8 @@ const CoverageMap = dynamic(() => import("./CoverageMap"), {
   loading: () => (
     <div
       className="map-canvas map-canvas-loading"
-      role="img"
       aria-label="Carregando mapa de cobertura"
+      aria-busy="true"
     />
   ),
 });

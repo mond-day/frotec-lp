@@ -1,21 +1,51 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" fill="none">
   <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#1a2332"/>
-      <stop offset="100%" stop-color="#0d1218"/>
+    <linearGradient id="sky" x1="0" y1="0" x2="0.15" y2="1">
+      <stop offset="0%" stop-color="#1c2738"/>
+      <stop offset="42%" stop-color="#121820"/>
+      <stop offset="100%" stop-color="#0a0d12"/>
     </linearGradient>
-    <linearGradient id="road" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#10E1B1" stop-opacity="0"/>
-      <stop offset="50%" stop-color="#10E1B1" stop-opacity="0.35"/>
-      <stop offset="100%" stop-color="#2D8CFF" stop-opacity="0"/>
+    <radialGradient id="riskGlow" cx="18%" cy="58%" r="48%">
+      <stop offset="0%" stop-color="#f0a93c" stop-opacity="0.28"/>
+      <stop offset="55%" stop-color="#f0a93c" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#f0a93c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="controlGlow" cx="82%" cy="36%" r="52%">
+      <stop offset="0%" stop-color="#10E1B1" stop-opacity="0.22"/>
+      <stop offset="50%" stop-color="#2D8CFF" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#10E1B1" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="horizon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f0a93c" stop-opacity="0.45"/>
+      <stop offset="35%" stop-color="#f0a93c" stop-opacity="0.05"/>
+      <stop offset="65%" stop-color="#10E1B1" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#2D8CFF" stop-opacity="0.4"/>
+    </linearGradient>
+    <linearGradient id="roadWarm" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f0a93c" stop-opacity="0.4"/>
+      <stop offset="45%" stop-color="#f0a93c" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="roadCool" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="35%" stop-color="#10E1B1" stop-opacity="0"/>
+      <stop offset="70%" stop-color="#10E1B1" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#2D8CFF" stop-opacity="0.25"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#151820" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#0a0d12"/>
     </linearGradient>
   </defs>
   <rect width="1920" height="1080" fill="url(#sky)"/>
-  <path d="M0 720 Q480 680 960 640 T1920 600 L1920 1080 L0 1080Z" fill="#151820" opacity="0.9"/>
-  <path d="M-100 780 C400 760 800 720 1200 680 S1800 640 2100 620" stroke="url(#road)" stroke-width="4" fill="none"/>
-  <path d="M-100 820 C420 800 820 760 1220 720 S1820 680 2100 660" stroke="url(#road)" stroke-width="2" fill="none" opacity="0.5"/>
-  <rect x="200" y="520" width="280" height="120" rx="8" fill="#20262f" stroke="#10E1B1" stroke-opacity="0.3"/>
-  <rect x="220" y="540" width="80" height="60" rx="4" fill="#10E1B1" opacity="0.15"/>
-  <text x="960" y="540" text-anchor="middle" fill="#edf3f1" opacity="0.25" font-family="system-ui,sans-serif" font-size="28" font-weight="600">Frotec+ · Frota em movimento</text>
-  <text x="960" y="580" text-anchor="middle" fill="#10E1B1" opacity="0.4" font-family="system-ui,sans-serif" font-size="16">Substitua por hero-bg.mp4</text>
+  <rect width="1920" height="1080" fill="url(#riskGlow)"/>
+  <rect width="1920" height="1080" fill="url(#controlGlow)"/>
+  <!-- Horizon light band -->
+  <rect y="560" width="1920" height="2" fill="url(#horizon)" opacity="0.55"/>
+  <!-- Ground plane -->
+  <path d="M0 620 Q480 580 960 560 T1920 540 L1920 1080 L0 1080Z" fill="url(#ground)"/>
+  <!-- Corridor / route lines (abstract, no illustration) -->
+  <path d="M-80 760 C400 740 820 700 1200 660 S1800 620 2100 600" stroke="url(#roadWarm)" stroke-width="3" fill="none"/>
+  <path d="M-80 790 C420 770 840 730 1220 690 S1820 650 2100 630" stroke="url(#roadCool)" stroke-width="2.5" fill="none"/>
+  <path d="M-80 830 C440 810 860 770 1240 730 S1840 690 2100 670" stroke="url(#roadCool)" stroke-width="1.5" fill="none" opacity="0.45"/>
+  <!-- Soft vignette -->
+  <rect width="1920" height="1080" fill="url(#sky)" opacity="0.15"/>
 </svg>

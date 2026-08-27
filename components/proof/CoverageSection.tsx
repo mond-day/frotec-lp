@@ -1,30 +1,47 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import CoverageMapClient from "@/components/CoverageMapClient";
 import Reveal from "@/components/motion/Reveal";
 import { track } from "@/lib/analytics";
 import { EXTENSAO_APROXIMADA } from "@/lib/cobertura";
+import {
+  COVERAGE_HAS_VIDEO,
+  COVERAGE_VIDEO_MOBILE_SRC,
+  COVERAGE_VIDEO_SRC,
+} from "@/lib/media";
 
+/**
+ * Cobertura: Leaflet full-bleed como protagonista.
+ * Se COVERAGE_HAS_VIDEO / route.mp4 existir, mostra vídeo com CTA para o mapa.
+ */
 export default function CoverageSection() {
   const ref = useRef<HTMLElement>(null);
   const tracked = useRef(false);
+  const [mapReady, setMapReady] = useState(!COVERAGE_HAS_VIDEO);
+  const [videoOk, setVideoOk] = useState(COVERAGE_HAS_VIDEO);
+  const [showVideo, setShowVideo] = useState(COVERAGE_HAS_VIDEO);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry?.isIntersecting && !tracked.current) {
-          tracked.current = true;
-          track("coverage_view");
+        if (entry?.isIntersecting) {
+          if (!tracked.current) {
+            tracked.current = true;
+            track("coverage_view");
+          }
+          setMapReady(true);
         }
       },
-      { threshold: 0.25 },
+      { threshold: 0.15, rootMargin: "200px 0px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  const usarVideo = showVideo && videoOk;
 
   return (
     <section className="coverage-section" id="cobertura" ref={ref} aria-labelledby="cobertura-title">
@@ -40,7 +57,75 @@ export default function CoverageSection() {
       </div>
 
       <div className="coverage-map-bleed">
-        <CoverageMapClient />
+        <div className={`coverage-stage${usarVideo ? " is-video" : " is-map"}`}>
+          {usarVideo && (
+            <div className="coverage-stage-layer coverage-stage-journey">
+              <div className="coverage-journey">
+                <video
+                  className="coverage-journey-video"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  onError={() => {
+                    setVideoOk(false);
+                    setShowVideo(false);
+                  }}
+                >
+                  <source
+                    src={COVERAGE_VIDEO_MOBILE_SRC}
+                    type="video/mp4"
+                    media="(max-width: 760px)"
+                  />
+                  <source src={COVERAGE_VIDEO_SRC} type="video/mp4" />
+                </video>
+                <div className="coverage-hud">
+                  <div className="coverage-hud-block">
+                    <span className="coverage-hud-label">Corredor</span>
+                    <strong>BR-163 · MT–RO</strong>
+                  </div>
+                </div>
+                <div className="coverage-journey-copy">
+                  <p>A operação muda de trecho. A gestão acompanha a rota.</p>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => {
+                      setMapReady(true);
+                      setShowVideo(false);
+                      track("coverage_explore");
+                    }}
+                  >
+                    Ver mapa
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div
+            className="coverage-stage-layer coverage-stage-map"
+            aria-hidden={usarVideo}
+            {...(usarVideo ? { inert: true } : {})}
+          >
+            {mapReady || !usarVideo ? <CoverageMapClient /> : null}
+            <div className="coverage-map-callouts" aria-hidden="true">
+              <div className="coverage-callout">
+                <span className="coverage-callout-kicker">Corredor BR-163 · MT–RO</span>
+                <strong>Sinop · BR-163 · BR-364 · Vilhena</strong>
+              </div>
+            </div>
+            {COVERAGE_HAS_VIDEO && !usarVideo && (
+              <button
+                type="button"
+                className="coverage-back-btn btn btn-ghost"
+                onClick={() => setShowVideo(true)}
+              >
+                Ver vídeo da rota
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="coverage-meta">

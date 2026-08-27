@@ -4,7 +4,6 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 import { useRef } from "react";
 import { track } from "@/lib/analytics";
 import HeroMedia from "./HeroMedia";
-import HeroOperationalData from "./HeroOperationalData";
 import RouteLine from "./RouteLine";
 
 export default function Hero() {
@@ -15,9 +14,8 @@ export default function Hero() {
     offset: ["start start", "end start"],
   });
 
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 80]);
-  const mediaScale = useTransform(scrollYProgress, [0, 1], [1, reduce ? 1 : 1.04]);
-  const transitionOpacity = useTransform(scrollYProgress, [0.15, 0.45], [0, 1]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 64]);
+  const mediaScale = useTransform(scrollYProgress, [0, 1], [1, reduce ? 1 : 1.05]);
 
   return (
     <section className="hero" id="topo" ref={ref}>
@@ -44,14 +42,7 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.55, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
               >
-                Frota parada custa mais do que manutenção.
-              </motion.span>
-              <motion.span
-                initial={reduce ? false : { opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.55, delay: 0.38, ease: [0.22, 1, 0.36, 1] }}
-              >
-                Custa prazo, margem e confiança.
+                Antes da quebra, existe um sinal.
               </motion.span>
             </h1>
 
@@ -59,25 +50,24 @@ export default function Hero() {
               className="lead"
               initial={reduce ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.52 }}
+              transition={{ duration: 0.5, delay: 0.42 }}
             >
-              A Frotec acompanha o estado técnico da sua frota, organiza a prevenção e audita os
-              serviços para você operar com mais previsibilidade — antes que uma falha vire
-              emergência na estrada.
+              A Frotec ajuda sua operação a identificar riscos, organizar a preventiva e validar
+              serviços antes que manutenção vire emergência.
             </motion.p>
 
             <motion.div
               className="hero-cta"
               initial={reduce ? false : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.68 }}
+              transition={{ duration: 0.45, delay: 0.58 }}
             >
               <a
                 href="#contato"
                 className="btn btn-primary"
                 onClick={() => track("hero_cta_click", { source: "hero" })}
               >
-                Quero diagnosticar minha frota
+                Avaliar minha frota
               </a>
               <a
                 href="#como-funciona"
@@ -88,14 +78,16 @@ export default function Hero() {
               </a>
             </motion.div>
 
-            <p className="hero-micro">Para transportadoras e operações com frota diesel.</p>
-
-            <motion.p className="hero-transition" style={{ opacity: transitionOpacity }}>
-              Quando um caminhão para, a operação inteira sente.
+            <motion.p
+              className="hero-micro"
+              initial={reduce ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.72 }}
+            >
+              <span className="hero-micro-dot" aria-hidden="true" />
+              Corredor BR-163 · base em Sinop/MT · modelo demonstrativo de rotina técnica
             </motion.p>
           </div>
-
-          <HeroOperationalData />
         </div>
       </motion.div>
     </section>

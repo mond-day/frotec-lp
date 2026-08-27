@@ -77,7 +77,7 @@ function camposDoLead(lead: PayloadLead): [string, string][] {
     ["E-mail", lead.email || "—"],
     ["Frota", `${lead.veiculos} ${lead.veiculos === 1 ? "caminhão" : "caminhões"}`],
     ["Região", lead.rota_label],
-    ["Maior problema", lead.problema_label || "—"],
+    ["Problemas", lead.problemas_label || "—"],
     ["Mensagem", lead.mensagem || "—"],
     ["Recebido em", formatarData(lead.data_envio)],
   ];

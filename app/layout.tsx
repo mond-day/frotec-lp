@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Barlow_Condensed, IBM_Plex_Mono, Manrope } from "next/font/google";
 import LenisProvider from "@/components/LenisProvider";
+import MotionConfigProvider from "@/components/motion/MotionConfig";
 import "lenis/dist/lenis.css";
 import "./globals.css";
 
@@ -50,7 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body>
         <LenisProvider />
-        {children}
+        <MotionConfigProvider>{children}</MotionConfigProvider>
       </body>
     </html>
   );

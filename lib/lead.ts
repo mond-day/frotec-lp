@@ -48,7 +48,8 @@ export type DadosLead = {
   email: string;
   veiculos: string;
   rota: string;
-  problema: string;
+  /** Multiselect: um ou mais problemas operacionais. */
+  problemas: string[];
   mensagem: string;
 };
 
@@ -60,7 +61,7 @@ export const LEAD_VAZIO: DadosLead = {
   email: "",
   veiculos: "",
   rota: "",
-  problema: "",
+  problemas: [],
   mensagem: "",
 };
 
@@ -70,6 +71,30 @@ export function buscarRota(valor: string) {
 
 export function buscarProblema(valor: string) {
   return OPCOES_PROBLEMA.find((opcao) => opcao.valor === valor);
+}
+
+/** Aceita array ou string legada; devolve só valores conhecidos, sem duplicata. */
+export function normalizarProblemas(valor: unknown): string[] {
+  const bruto = Array.isArray(valor)
+    ? valor
+    : typeof valor === "string"
+      ? valor.split(/[,;|]/).map((s) => s.trim())
+      : [];
+
+  const unicos = new Set<string>();
+  for (const item of bruto) {
+    if (typeof item !== "string") continue;
+    const limpo = item.trim();
+    if (buscarProblema(limpo)) unicos.add(limpo);
+  }
+  return [...unicos];
+}
+
+export function rotulosProblemas(valores: string[]): string {
+  return valores
+    .map((v) => buscarProblema(v)?.rotulo)
+    .filter(Boolean)
+    .join("; ");
 }
 
 /** Formata progressivamente: (66) 99999-0000 */
@@ -104,8 +129,8 @@ export function validarLead(dados: DadosLead, etapa?: 1 | 2): ErrosLead {
       erros.rota = "Selecione a região de operação da frota.";
     }
 
-    if (!buscarProblema(dados.problema)) {
-      erros.problema = "Selecione o maior problema hoje.";
+    if (!dados.problemas.length || dados.problemas.some((p) => !buscarProblema(p))) {
+      erros.problemas = "Selecione ao menos um problema.";
     }
   }
 
@@ -157,8 +182,8 @@ export type PayloadLead = {
   rota: string;
   rota_label: string;
   fora_area: boolean;
-  problema: string;
-  problema_label: string;
+  problemas: string[];
+  problemas_label: string;
   mensagem: string;
   origem: string;
   data_envio: string;
@@ -166,7 +191,7 @@ export type PayloadLead = {
 
 export function montarPayload(dados: DadosLead): PayloadLead {
   const rota = buscarRota(dados.rota);
-  const problema = buscarProblema(dados.problema);
+  const problemas = normalizarProblemas(dados.problemas);
 
   return {
     nome: dados.nome.trim(),
@@ -178,8 +203,8 @@ export function montarPayload(dados: DadosLead): PayloadLead {
     rota: dados.rota,
     rota_label: rota?.rotulo ?? "",
     fora_area: rota?.foraDeArea ?? false,
-    problema: dados.problema,
-    problema_label: problema?.rotulo ?? "",
+    problemas,
+    problemas_label: rotulosProblemas(problemas),
     mensagem: dados.mensagem.trim(),
     origem: "site-frotec",
     data_envio: new Date().toISOString(),

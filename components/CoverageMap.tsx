@@ -13,6 +13,15 @@ import {
 const COR_BR163 = "#10E1B1";
 const COR_BR364 = "#2D8CFF";
 
+/** Labels permanentes no mapa (além dos popups). */
+const LABELS: { nome: string; coords: Ponto; sub?: string }[] = [
+  { nome: "Sinop", coords: SEDE.coords, sub: "Base Frotec" },
+  { nome: "Cuiabá", coords: ROTA_BR163[0], sub: "BR-163" },
+  { nome: "Sorriso", coords: ROTA_BR163[4], sub: "BR-163" },
+  { nome: "Guarantã do Norte", coords: ROTA_BR163[7], sub: "BR-163" },
+  { nome: "Vilhena", coords: ROTA_BR364[4], sub: "BR-364 · RO" },
+];
+
 /**
  * Mapa do corredor de atuacao.
  *
@@ -38,22 +47,17 @@ export default function CoverageMap() {
         attributionControl: true,
       });
 
-      // Basemap escuro da Esri: aberto, sem necessidade de API key.
-      // (O dark_all do CARTO, usado no HTML de referencia, passou a exigir chave
-      // e carimba "API KEY REQ" sobre os tiles.)
       L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
         { attribution: "Tiles &copy; Esri", maxZoom: 16 },
       ).addTo(mapa);
 
-      // Camada so de rotulos, para aparecerem os nomes das cidades.
       L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
         { maxZoom: 16, pane: "shadowPane" },
       ).addTo(mapa);
 
       const desenharRota = (pontos: Ponto[], cor: string) => {
-        // Faixa larga e translucida por baixo = area de cobertura ao redor da rota.
         L.polyline(pontos, {
           color: cor,
           weight: 26,
@@ -94,8 +98,23 @@ export default function CoverageMap() {
           .bindPopup(`<strong>${ponta.nome}</strong><br>${ponta.descricao}`);
       });
 
+      LABELS.forEach((label) => {
+        L.marker(label.coords, {
+          icon: L.divIcon({
+            className: "map-city-label",
+            html: `<div class="map-city-label-inner"><span>${label.nome}</span>${
+              label.sub ? `<small>${label.sub}</small>` : ""
+            }</div>`,
+            iconSize: [0, 0],
+            iconAnchor: [-10, 8],
+          }),
+          interactive: false,
+          keyboard: false,
+        }).addTo(mapa!);
+      });
+
       mapa.fitBounds(L.latLngBounds([...ROTA_BR163, ...ROTA_BR364]), {
-        padding: [40, 40],
+        padding: [48, 48],
       });
     });
 
@@ -105,5 +124,12 @@ export default function CoverageMap() {
     };
   }, []);
 
-  return <div ref={containerRef} className="map-canvas" role="img" aria-label="Mapa do corredor de atuação da Frotec na BR-163, entre Mato Grosso e Rondônia" />;
+  return (
+    <div
+      ref={containerRef}
+      className="map-canvas"
+      role="application"
+      aria-label="Mapa interativo do corredor de atuação da Frotec na BR-163, entre Mato Grosso e Rondônia. Use os controles de zoom para explorar."
+    />
+  );
 }

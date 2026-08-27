@@ -1,18 +1,12 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
-
+/**
+ * Microprova operacional — mantida fora da dobra principal do Hero.
+ * Usada abaixo do Hero quando precisamos reforçar status sem poluir a 1ª viewport.
+ */
 export default function HeroOperationalData() {
-  const reduce = useReducedMotion();
-
   return (
-    <motion.aside
-      className="op-chip"
-      aria-label="Recorte operacional ilustrativo"
-      initial={reduce ? false : { opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.55, delay: 0.75, ease: [0.22, 1, 0.36, 1] }}
-    >
+    <aside className="op-chip" aria-label="Recorte operacional ilustrativo">
       <div className="op-chip-label">Veículo 042 · status técnico</div>
       <div className="op-chip-row">
         <span>Situação</span>
@@ -26,6 +20,6 @@ export default function HeroOperationalData() {
         <span>Origem</span>
         <span>Modelo demonstrativo</span>
       </div>
-    </motion.aside>
+    </aside>
   );
 }

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frotec — Cobertura BR-163</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <style>
+    html, body { margin: 0; height: 100%; background: #0a0e16; overflow: hidden; }
+    #map { width: 1280px; height: 720px; }
+    .city-label {
+      background: rgba(10, 14, 22, 0.88);
+      border: 1px solid rgba(45, 140, 255, 0.45);
+      color: #edf3f1;
+      font: 600 12px/1.2 "DM Sans", system-ui, sans-serif;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    }
+    .city-label.sede {
+      border-color: rgba(16, 225, 177, 0.65);
+      color: #10e1b1;
+    }
+    .hud {
+      position: absolute;
+      z-index: 1000;
+      left: 24px;
+      bottom: 24px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      background: rgba(10, 14, 22, 0.9);
+      border: 1px solid rgba(234, 240, 238, 0.12);
+      color: #edf3f1;
+      font: 500 13px/1.4 "DM Sans", system-ui, sans-serif;
+      pointer-events: none;
+    }
+    .hud strong { display: block; font-size: 16px; margin-top: 2px; color: #2d8cff; }
+    .hud span { color: rgba(237, 243, 241, 0.55); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div class="hud">
+    <span>Corredor atendido</span>
+    <strong>BR-163 · MT–RO</strong>
+  </div>
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script>
+    const BR163 = [
+      [-15.6014, -56.0979], // Cuiabá
+      [-14.7208, -56.3278],
+      [-13.8375, -56.0736], // Nova Mutum
+      [-13.05, -55.9111],
+      [-12.5425, -55.7211], // Sorriso
+      [-11.8642, -55.5025], // Sinop
+      [-10.2253, -54.9797],
+      [-9.9611, -54.9053], // Guarantã
+    ];
+    const BR364 = [
+      [-15.6014, -56.0979],
+      [-14.4079, -56.4462],
+      [-13.6752, -57.8895],
+      [-13.6637, -59.7887],
+      [-12.7406, -60.1458], // Vilhena
+    ];
+    const CITIES = [
+      { name: "Cuiabá", coords: [-15.6014, -56.0979] },
+      { name: "Nova Mutum", coords: [-13.8375, -56.0736] },
+      { name: "Sorriso", coords: [-12.5425, -55.7211] },
+      { name: "Sinop", coords: [-11.8642, -55.5025], sede: true },
+      { name: "Guarantã do Norte", coords: [-9.9611, -54.9053] },
+      { name: "Vilhena", coords: [-12.7406, -60.1458] },
+    ];
+
+    const map = L.map("map", {
+      zoomControl: false,
+      attributionControl: false,
+      preferCanvas: true,
+    });
+
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      maxZoom: 18,
+      subdomains: "abcd",
+    }).addTo(map);
+
+    L.polyline(BR163, { color: "#2d8cff", weight: 4, opacity: 0.95 }).addTo(map);
+    L.polyline(BR364, { color: "#10e1b1", weight: 3.5, opacity: 0.85, dashArray: "8 6" }).addTo(map);
+
+    CITIES.forEach((c) => {
+      L.circleMarker(c.coords, {
+        radius: c.sede ? 8 : 5,
+        color: c.sede ? "#10e1b1" : "#2d8cff",
+        fillColor: c.sede ? "#10e1b1" : "#2d8cff",
+        fillOpacity: 0.95,
+        weight: 2,
+      }).addTo(map);
+
+      L.marker(c.coords, {
+        icon: L.divIcon({
+          className: "",
+          html: `<div class="city-label${c.sede ? " sede" : ""}">${c.name}</div>`,
+          iconSize: [0, 0],
+          iconAnchor: [-10, 10],
+        }),
+      }).addTo(map);
+    });
+
+    const bounds = L.latLngBounds([...BR163, ...BR364]).pad(0.18);
+    map.fitBounds(bounds);
+
+    window.__COVERAGE_MAP__ = map;
+    window.__COVERAGE_BOUNDS__ = bounds;
+    window.__COVERAGE_READY__ = true;
+  </script>
+</body>
+</html>

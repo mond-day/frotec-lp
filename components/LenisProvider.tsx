@@ -13,9 +13,9 @@ export default function LenisProvider() {
     }
 
     const lenis = new Lenis({
-      lerp: 0.1,
+      // Suave, mas sem double-smoothing pesado sobre Framer scroll stories
+      lerp: 0.085,
       smoothWheel: true,
-      // Âncoras #contato / #como-funciona continuam funcionando via scroll nativo + Lenis
     });
 
     let frameId = 0;

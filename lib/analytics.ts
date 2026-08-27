@@ -8,6 +8,7 @@ export type AnalyticsEvent =
   | "secondary_cta_click"
   | "process_section_view"
   | "coverage_view"
+  | "coverage_explore"
   | "form_start"
   | "form_step_1_complete"
   | "form_submit"

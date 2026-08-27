@@ -35,14 +35,26 @@ export default function LeadQualificationForm() {
     track("form_start");
   }
 
-  function alterar(campo: keyof DadosLead, valor: string) {
+  function alterar(campo: Exclude<keyof DadosLead, "problemas">, valor: string) {
     marcarInicio();
     setDados((anterior) => ({ ...anterior, [campo]: valor }));
     setErros((anterior) => ({ ...anterior, [campo]: undefined }));
   }
 
-  function aoDigitar(campo: keyof DadosLead) {
-    return (evento: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+  function alternarProblema(valor: string) {
+    marcarInicio();
+    setDados((anterior) => {
+      const jaTem = anterior.problemas.includes(valor);
+      const problemas = jaTem
+        ? anterior.problemas.filter((p) => p !== valor)
+        : [...anterior.problemas, valor];
+      return { ...anterior, problemas };
+    });
+    setErros((anterior) => ({ ...anterior, problemas: undefined }));
+  }
+
+  function aoDigitar(campo: Exclude<keyof DadosLead, "problemas">) {
+    return (evento: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       alterar(campo, evento.target.value);
   }
 
@@ -108,6 +120,29 @@ export default function LeadQualificationForm() {
 
   const enviando = situacao === "enviando";
 
+  if (situacao === "enviado") {
+    return (
+      <div className="form-shell form-success" role="status" aria-live="polite">
+        <div className="form-success-icon" aria-hidden="true">
+          ✓
+        </div>
+        <h3>Solicitação recebida</h3>
+        <p>{mensagemEnvio}</p>
+        <button
+          type="button"
+          className="btn btn-ghost"
+          onClick={() => {
+            setSituacao("parado");
+            setMensagemEnvio("");
+            setErros({});
+          }}
+        >
+          Enviar outro diagnóstico
+        </button>
+      </div>
+    );
+  }
+
   return (
     <form className="form-shell" onSubmit={aoEnviar} noValidate>
       <div className="form-steps">
@@ -120,7 +155,7 @@ export default function LeadQualificationForm() {
 
       {etapa === 1 ? (
         <>
-          <div className="field">
+          <div className={`field${erros.veiculos ? " has-error" : ""}`}>
             <label htmlFor="veiculos">Quantos veículos sua frota possui?</label>
             <input
               id="veiculos"
@@ -137,13 +172,13 @@ export default function LeadQualificationForm() {
             {erros.veiculos && <span className="field-error">{erros.veiculos}</span>}
           </div>
 
-          <div className="field">
+          <div className={`field${erros.rota ? " has-error" : ""}`}>
             <label htmlFor="rota">Onde está a base da operação?</label>
             <select
               id="rota"
               name="rota"
               value={dados.rota}
-              onChange={aoDigitar("rota")}
+              onChange={(evento) => alterar("rota", evento.target.value)}
               aria-invalid={Boolean(erros.rota)}
             >
               <option value="" disabled>
@@ -165,25 +200,30 @@ export default function LeadQualificationForm() {
             </p>
           )}
 
-          <fieldset className="field" style={{ border: "none", padding: 0 }}>
-            <legend style={{ fontSize: 13, marginBottom: 8, color: "var(--ink-mut)" }}>
-              Qual é hoje o maior problema?
-            </legend>
-            <div className="problem-options">
-              {OPCOES_PROBLEMA.map((opcao) => (
-                <label className="problem-option" key={opcao.valor}>
-                  <input
-                    type="radio"
-                    name="problema"
-                    value={opcao.valor}
-                    checked={dados.problema === opcao.valor}
-                    onChange={() => alterar("problema", opcao.valor)}
-                  />
-                  {opcao.rotulo}
-                </label>
-              ))}
+          <fieldset className={`field problem-fieldset${erros.problemas ? " has-error" : ""}`}>
+            <legend>Quais problemas você enfrenta hoje?</legend>
+            <p className="problem-hint">Pode selecionar mais de um.</p>
+            <div className="problem-list" role="group" aria-label="Problemas atuais">
+              {OPCOES_PROBLEMA.map((opcao) => {
+                const selecionado = dados.problemas.includes(opcao.valor);
+                return (
+                  <label
+                    key={opcao.valor}
+                    className={`problem-item${selecionado ? " is-selected" : ""}`}
+                  >
+                    <input
+                      type="checkbox"
+                      name="problemas"
+                      value={opcao.valor}
+                      checked={selecionado}
+                      onChange={() => alternarProblema(opcao.valor)}
+                    />
+                    <span>{opcao.rotulo}</span>
+                  </label>
+                );
+              })}
             </div>
-            {erros.problema && <span className="field-error">{erros.problema}</span>}
+            {erros.problemas && <span className="field-error">{erros.problemas}</span>}
           </fieldset>
 
           <div className="form-actions">
@@ -195,7 +235,7 @@ export default function LeadQualificationForm() {
       ) : (
         <>
           <div className="row-2">
-            <div className="field">
+            <div className={`field${erros.nome ? " has-error" : ""}`}>
               <label htmlFor="nome">Nome</label>
               <input
                 id="nome"
@@ -208,7 +248,7 @@ export default function LeadQualificationForm() {
               />
               {erros.nome && <span className="field-error">{erros.nome}</span>}
             </div>
-            <div className="field">
+            <div className={`field${erros.empresa ? " has-error" : ""}`}>
               <label htmlFor="empresa">Empresa</label>
               <input
                 id="empresa"
@@ -224,7 +264,7 @@ export default function LeadQualificationForm() {
           </div>
 
           <div className="row-2">
-            <div className="field">
+            <div className={`field${erros.whatsapp ? " has-error" : ""}`}>
               <label htmlFor="whatsapp">WhatsApp</label>
               <input
                 id="whatsapp"
@@ -238,7 +278,7 @@ export default function LeadQualificationForm() {
               />
               {erros.whatsapp && <span className="field-error">{erros.whatsapp}</span>}
             </div>
-            <div className="field">
+            <div className={`field${erros.email ? " has-error" : ""}`}>
               <label htmlFor="email">E-mail corporativo (opcional)</label>
               <input
                 id="email"
@@ -253,7 +293,7 @@ export default function LeadQualificationForm() {
             </div>
           </div>
 
-          <div className="field">
+          <div className={`field${erros.cnpj ? " has-error" : ""}`}>
             <label htmlFor="cnpj">CNPJ (opcional)</label>
             <input
               id="cnpj"
@@ -268,7 +308,7 @@ export default function LeadQualificationForm() {
             {erros.cnpj && <span className="field-error">{erros.cnpj}</span>}
           </div>
 
-          <div className="field">
+          <div className={`field${erros.mensagem ? " has-error" : ""}`}>
             <label htmlFor="mensagem">Algo mais que ajude o diagnóstico? (opcional)</label>
             <textarea
               id="mensagem"
@@ -307,19 +347,24 @@ export default function LeadQualificationForm() {
               Voltar
             </button>
             <button type="submit" className="btn btn-primary" disabled={enviando} style={{ flex: 1 }}>
-              {enviando ? "Enviando..." : "Quero avaliar minha frota"}
+              {enviando ? (
+                <span className="btn-spinner-label">
+                  <span className="btn-spinner" aria-hidden="true" />
+                  Enviando…
+                </span>
+              ) : (
+                "Avaliar minha frota"
+              )}
             </button>
           </div>
         </>
       )}
 
-      <div
-        className={`form-msg${situacao === "enviado" ? " ok" : ""}${situacao === "erro" ? " err" : ""}`}
-        role="status"
-        aria-live="polite"
-      >
-        {mensagemEnvio}
-      </div>
+      {situacao === "erro" && mensagemEnvio && (
+        <div className="form-msg err" role="alert" aria-live="assertive">
+          {mensagemEnvio}
+        </div>
+      )}
     </form>
   );
 }

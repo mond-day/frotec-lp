@@ -1,4 +1,7 @@
+"use client";
+
 import Reveal from "@/components/motion/Reveal";
+import MockupDemo from "@/components/proof/MockupDemo";
 
 const PROVAS = [
   {
@@ -17,16 +20,22 @@ const PROVAS = [
 
 export default function OperationalProof() {
   return (
-    <section className="theme-paper band-edge" id="prova" aria-labelledby="prova-title" style={{ padding: "100px 0" }}>
+    <section
+      className="theme-paper band-edge proof-section"
+      id="prova"
+      aria-labelledby="prova-title"
+    >
       <div className="wrap">
         <Reveal>
           <div className="eyebrow">Prova operacional</div>
           <h2 id="prova-title">A confiança vem do processo.</h2>
           <p style={{ marginTop: 14, maxWidth: 520 }}>
-            Enquanto reunimos depoimentos autorizados, mostramos o que sustenta a operação: método,
-            documentação e cobertura real.
+            Demo ilustrativa do portal e do app avaliador (modelo futuro). Passe o mouse para pausar
+            a sequência de telas.
           </p>
         </Reveal>
+
+        <MockupDemo />
 
         <div className="proof-grid">
           {PROVAS.map((item, index) => (
