@@ -106,8 +106,9 @@ export default function FailureChain() {
               <path
                 d={DESKTOP_PATH}
                 fill="none"
-                stroke="rgba(234,240,238,0.12)"
+                stroke="rgba(234,240,238,0.09)"
                 strokeWidth="2"
+                strokeDasharray="6 8"
               />
               <motion.path
                 d={DESKTOP_PATH}
@@ -115,14 +116,22 @@ export default function FailureChain() {
                 stroke="url(#failGrad)"
                 strokeWidth="2.5"
                 strokeLinecap="round"
+                filter="url(#failGlow)"
                 style={{ pathLength: reduce ? 1 : pathLength }}
               />
               <defs>
                 <linearGradient id="failGrad" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#f0a93c" />
                   <stop offset="55%" stopColor="#ff6b6b" />
-                  <stop offset="100%" stopColor="#f0a93c" />
+                  <stop offset="100%" stopColor="#ff6b6b" />
                 </linearGradient>
+                <filter id="failGlow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="8" result="b" />
+                  <feMerge>
+                    <feMergeNode in="b" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
               </defs>
               {NODE_POSITIONS.map((pos, i) => {
                 const on = i <= destaque;

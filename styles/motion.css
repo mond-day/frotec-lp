@@ -46,7 +46,8 @@
   .hero-art-dash,
   .hero-art-pulse,
   .corridor-dash,
-  .op-status::before {
+  .op-status::before,
+  .hero-timeline-dot {
     animation: none !important;
   }
 

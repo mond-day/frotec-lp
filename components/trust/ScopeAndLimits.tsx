@@ -19,7 +19,7 @@ const NAO_E = [
 
 export default function ScopeAndLimits() {
   return (
-    <section className="theme-light" id="escopo" aria-labelledby="escopo-title" style={{ padding: "100px 0" }}>
+    <section className="theme-light" id="escopo" aria-labelledby="escopo-title">
       <div className="wrap">
         <Reveal>
           <div className="eyebrow">Escopo e limites</div>

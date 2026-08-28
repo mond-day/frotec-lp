@@ -19,7 +19,7 @@ const TALVEZ_NAO = [
 
 export default function FitSection() {
   return (
-    <section className="theme-graphite band-edge" id="para-quem" aria-labelledby="fit-title" style={{ padding: "100px 0" }}>
+    <section className="theme-graphite band-edge" id="para-quem" aria-labelledby="fit-title">
       <div className="wrap">
         <Reveal>
           <div className="eyebrow">Qualificação</div>

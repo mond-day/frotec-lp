@@ -155,7 +155,7 @@ export default function MockupDemo() {
           </div>
         </div>
         <div className="device-laptop-base" aria-hidden="true" />
-        <span className="demo-tag mockup-tag">Portal futuro · modelo demonstrativo</span>
+        <span className="demo-tag mockup-tag">Portal do gestor</span>
       </div>
 
       <div className="device-phone">
@@ -168,7 +168,7 @@ export default function MockupDemo() {
             alt="App avaliador Frotec — modelo demonstrativo futuro"
           />
         </div>
-        <span className="demo-tag mockup-tag">App avaliador · ilustrativo</span>
+        <p className="mockup-phone-caption">App avaliador · ilustrativo</p>
       </div>
     </div>
   );

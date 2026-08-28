@@ -40,9 +40,7 @@ export default function OperationalProof() {
         <div className="proof-grid">
           {PROVAS.map((item, index) => (
             <Reveal key={item.titulo} delay={index * 0.06} className="proof-item">
-              <span className="demo-tag" style={{ marginBottom: 14 }}>
-                Modelo demonstrativo
-              </span>
+              <div className="proof-kicker">Modelo demonstrativo</div>
               <h3>{item.titulo}</h3>
               <p>{item.texto}</p>
             </Reveal>
