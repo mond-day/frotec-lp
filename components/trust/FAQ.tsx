@@ -42,7 +42,7 @@ const PERGUNTAS = [
   {
     pergunta: "Para quem o modelo faz mais sentido?",
     resposta:
-      "Para operações em que a manutenção já impacta prazo, margem e rotina do gestor — em especial frotas diesel no corredor da BR-163 entre Mato Grosso e Rondônia, com base em Sinop/MT.",
+      "Para operações em que a manutenção já impacta prazo, margem e rotina do gestor — em especial frotas diesel no corredor da BR-163 de Rondonópolis a Miritituba, com ramal até Rondônia e base em Sinop/MT.",
   },
 ];
 

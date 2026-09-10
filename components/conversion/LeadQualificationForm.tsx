@@ -195,8 +195,8 @@ export default function LeadQualificationForm() {
 
           {foraDeArea && (
             <p className="form-alert" role="status">
-              Nesta fase a Frotec atende o corredor da BR-163 entre Mato Grosso e Rondônia. Você pode
-              enviar os dados mesmo assim — registramos para a expansão.
+              Nesta fase a Frotec atende o corredor da BR-163 de Rondonópolis a Miritituba e o ramal
+              até Rondônia. Você pode enviar os dados mesmo assim — registramos para a expansão.
             </p>
           )}
 

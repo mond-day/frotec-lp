@@ -27,12 +27,12 @@ export default function HeroOperationalData() {
       </aside>
       <div className="hero-stats">
         <div className="hero-stat">
-          <div className="hero-stat-value is-accent">~1.500</div>
+          <div className="hero-stat-value is-accent">~2.000</div>
           <div className="hero-stat-label">km de corredor</div>
         </div>
         <div className="hero-stat">
           <div className="hero-stat-value">
-            MT<span className="is-muted">·</span>RO
+            MT<span className="is-muted">·</span>RO<span className="is-muted">·</span>PA
           </div>
           <div className="hero-stat-label">base em Sinop</div>
         </div>

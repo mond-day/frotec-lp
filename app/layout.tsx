@@ -26,7 +26,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Frotec | Gestão técnica para frotas que não podem parar",
   description:
-    "Acompanhe o estado técnico da frota, organize a prevenção e audite serviços — antes que uma falha vire emergência na estrada. Atuação no corredor BR-163, eixo MT–RO.",
+    "Acompanhe o estado técnico da frota, organize a prevenção e audite serviços — antes que uma falha vire emergência na estrada. Atuação no corredor BR-163, de Rondonópolis a Miritituba.",
   openGraph: {
     title: "Frotec | Gestão técnica para frotas que não podem parar",
     description:

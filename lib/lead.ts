@@ -3,9 +3,9 @@ import { apenasDigitos, cnpjValido } from "./cnpj";
 /**
  * Regioes aceitas no formulario.
  *
- * Nesta fase a operacao atende so o eixo BR-163 entre Mato Grosso e Rondonia.
- * "Outra regiao" continua sendo aceita, mas o lead vai marcado com fora_area
- * para o time comercial tratar como expansao futura.
+ * Nesta fase a operacao atende o eixo BR-163 de Rondonopolis a Miritituba/PA
+ * e o ramal BR-364 ate Rondonia. "Outra regiao" continua sendo aceita, mas o
+ * lead vai marcado com fora_area para o time comercial tratar como expansao.
  */
 export const OPCOES_ROTA = [
   { valor: "br163-sinop", rotulo: "BR-163 — Sinop e região (MT)", foraDeArea: false },
@@ -17,6 +17,16 @@ export const OPCOES_ROTA = [
   {
     valor: "br163-sul",
     rotulo: "BR-163 — sul do MT (Cuiabá, Nova Mutum)",
+    foraDeArea: false,
+  },
+  {
+    valor: "br163-rondonopolis",
+    rotulo: "BR-163 — Rondonópolis e sul do MT",
+    foraDeArea: false,
+  },
+  {
+    valor: "br163-pa",
+    rotulo: "BR-163 — Pará (Miritituba / Itaituba)",
     foraDeArea: false,
   },
   {

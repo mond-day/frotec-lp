@@ -14,7 +14,11 @@ const VH = 770;
 const BASE_TILT = 17;
 const foundBase = CIDADES_ESQUEMA.findIndex((c) => c.base);
 const SINOP_INDEX = foundBase >= 0 ? foundBase : 2;
-const LABEL_BELOW = new Set(["Cuiabá", "Diamantino", "Comodoro"]);
+const LABEL_BELOW = new Set(["Cuiabá", "Diamantino", "Comodoro", "Rondonópolis"]);
+
+function corCidade(uf: "MT" | "RO" | "PA") {
+  return uf === "RO" ? "#2d8cff" : "#10e1b1";
+}
 
 type Props = {
   onExplorarGeo?: () => void;
@@ -161,7 +165,7 @@ export default function CorridorMap({ onExplorarGeo }: Props) {
           {CIDADES_ESQUEMA.map((c, i) => {
             const on = i === cidade;
             const size = (c.base ? 16 : 10) + (on ? 4 : 0);
-            const cor = c.uf === "RO" ? "#2d8cff" : "#10e1b1";
+            const cor = corCidade(c.uf);
             const px = ((c.x - VX) / VW) * 100;
             const py = ((c.y - VY) / VH) * 100;
             const hideLabel = narrow && !c.base && !on;
@@ -220,7 +224,7 @@ export default function CorridorMap({ onExplorarGeo }: Props) {
           <div className="corridor-legend-rows">
             <div>
               <span className="corridor-swatch corridor-swatch-163" />
-              BR-163 · Cuiabá ↔ Guarantã do Norte
+              BR-163 · Rondonópolis ↔ Miritituba
             </div>
             <div>
               <span className="corridor-swatch corridor-swatch-364" />

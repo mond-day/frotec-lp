@@ -4,6 +4,9 @@ import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import {
   EXTREMIDADES,
+  PONTO_CUIABA,
+  PONTO_MIRITITUBA,
+  PONTO_RONDONOPOLIS,
   ROTA_BR163,
   ROTA_BR364,
   SEDE,
@@ -16,9 +19,9 @@ const COR_BR364 = "#2D8CFF";
 /** Labels permanentes no mapa (além dos popups). */
 const LABELS: { nome: string; coords: Ponto; sub?: string }[] = [
   { nome: "Sinop", coords: SEDE.coords, sub: "Base Frotec" },
-  { nome: "Cuiabá", coords: ROTA_BR163[0], sub: "BR-163" },
-  { nome: "Sorriso", coords: ROTA_BR163[4], sub: "BR-163" },
-  { nome: "Guarantã do Norte", coords: ROTA_BR163[7], sub: "BR-163" },
+  { nome: "Cuiabá", coords: PONTO_CUIABA, sub: "BR-163" },
+  { nome: "Rondonópolis", coords: PONTO_RONDONOPOLIS, sub: "BR-163" },
+  { nome: "Miritituba", coords: PONTO_MIRITITUBA, sub: "BR-163 · PA" },
   { nome: "Vilhena", coords: ROTA_BR364[4], sub: "BR-364 · RO" },
 ];
 
@@ -129,7 +132,7 @@ export default function CoverageMap() {
       ref={containerRef}
       className="map-canvas"
       role="application"
-      aria-label="Mapa interativo do corredor de atuação da Frotec na BR-163, entre Mato Grosso e Rondônia. Use os controles de zoom para explorar."
+      aria-label="Mapa interativo do corredor de atuação da Frotec na BR-163, de Rondonópolis a Miritituba, com ramal da BR-364 até Rondônia. Use os controles de zoom para explorar."
     />
   );
 }

@@ -8,7 +8,7 @@
 export const CONTATO = {
   marca: "Frotec",
   cidade: "Sinop, Mato Grosso",
-  atuacao: "BR-163 — eixo Mato Grosso–Rondônia",
+  atuacao: "BR-163 — Rondonópolis a Miritituba, com ramal BR-364 até Rondônia",
   telefone: "(66) 9 0000-0000",
   telefoneLink: "tel:+5566900000000",
   email: "contato@frotec.com.br",

@@ -81,7 +81,7 @@ export default function Hero() {
                 transition={{ duration: 0.45, delay: 0.14 }}
               >
                 <span className="live-badge-dot" aria-hidden="true" />
-                Corredor BR-163 · MT–RO
+                Corredor BR-163 · MT–RO–PA
               </motion.div>
 
               <h1>

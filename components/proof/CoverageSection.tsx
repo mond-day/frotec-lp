@@ -10,7 +10,7 @@ import { EXTENSAO_APROXIMADA } from "@/lib/cobertura";
 const STATS = [
   { valor: EXTENSAO_APROXIMADA, label: "de corredor atendido", cor: "var(--primary)" },
   { valor: "2", label: "eixos: BR-163 e BR-364", cor: "var(--trail)" },
-  { valor: "MT · RO", label: "estados na fase atual", cor: "var(--ink)" },
+  { valor: "MT · RO · PA", label: "estados na fase atual", cor: "var(--ink)" },
   { valor: "Sinop/MT", label: "base da operação", cor: "var(--ink)" },
 ];
 
@@ -52,8 +52,9 @@ export default function CoverageSection() {
         </Reveal>
         <Reveal delay={0.08}>
           <p>
-            Da base em Sinop/MT acompanhamos o eixo da BR-163 — de Cuiabá ao norte do estado — e o
-            ramal da BR-364 até Vilhena, em Rondônia. Toque em uma cidade para aproximar.
+            Da base em Sinop/MT acompanhamos o eixo da BR-163 — de Rondonópolis a Miritituba, no
+            Pará, passando por Cuiabá e Sinop — e o ramal da BR-364 até Vilhena, em Rondônia. Toque
+            em uma cidade para aproximar.
           </p>
         </Reveal>
       </div>
@@ -72,8 +73,8 @@ export default function CoverageSection() {
             {mapReady ? <CoverageMapClient /> : null}
             <div className="coverage-map-callouts" aria-hidden="true">
               <div className="coverage-callout">
-                <span className="coverage-callout-kicker">Corredor BR-163 · MT–RO</span>
-                <strong>Sinop · BR-163 · BR-364 · Vilhena</strong>
+                <span className="coverage-callout-kicker">Corredor BR-163 · MT–RO–PA</span>
+                <strong>Rondonópolis · Sinop · Miritituba · Vilhena</strong>
               </div>
             </div>
             <button
@@ -100,8 +101,9 @@ export default function CoverageSection() {
 
       <p className="coverage-note">
         <strong style={{ color: "var(--ink)" }}>O atendimento é por rota, não por cidade fixa.</strong>{" "}
-        Nesta fase a operação atende o eixo BR-163 entre Mato Grosso e Rondônia. Empresas de fora
-        podem se cadastrar: o contato fica registrado para quando a expansão chegar.
+        Nesta fase a operação atende o eixo BR-163 de Rondonópolis a Miritituba e o ramal da
+        BR-364 até Rondônia. Empresas de fora podem se cadastrar: o contato fica registrado para
+        quando a expansão chegar.
       </p>
     </section>
   );

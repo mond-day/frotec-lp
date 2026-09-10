@@ -111,8 +111,8 @@ export default function Footer() {
               height={149}
             />
             <p className="foot-brand-copy">
-              Gestão técnica de frotas diesel no corredor BR-163 — eixo Mato Grosso–Rondônia, com
-              base em Sinop/MT.
+              Gestão técnica de frotas diesel no corredor BR-163 — de Rondonópolis a Miritituba,
+              com ramal até Rondônia e base em Sinop/MT.
             </p>
             <div className="foot-contact-lines">
               <a href={`mailto:${CONTATO.email}`}>{CONTATO.email}</a>
@@ -162,7 +162,7 @@ export default function Footer() {
 
         <div className="foot-bottom">
           <span>
-            © {year} {CONTATO.marca} · {CONTATO.cidade} — atuação em MT e RO
+            © {year} {CONTATO.marca} · {CONTATO.cidade} — atuação em MT, RO e PA
           </span>
           <span className="foot-bottom-links">
             <Link href="/privacidade">Privacidade</Link>
