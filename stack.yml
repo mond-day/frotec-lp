@@ -53,6 +53,8 @@ services:
       PROPOSTAS_USER: ${PROPOSTAS_USER}
       PROPOSTAS_PASSWORD: ${PROPOSTAS_PASSWORD}
       PROPOSTAS_SESSION_SECRET: ${PROPOSTAS_SESSION_SECRET}
+      # Marca d'agua do PDF de contrato. So some se for exatamente true.
+      CONTRATO_MINUTA_APROVADA: ${CONTRATO_MINUTA_APROVADA}
     networks:
       - traefik-public
     deploy:

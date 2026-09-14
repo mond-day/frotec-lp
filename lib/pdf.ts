@@ -17,7 +17,13 @@ function chromeLocal(): string | undefined {
   return undefined;
 }
 
-export async function htmlParaPdf(html: string): Promise<Buffer> {
+export type OpcoesPdf = {
+  cabecalhoHtml?: string;
+  rodapeHtml?: string;
+  margem?: { top: string; bottom: string; left: string; right: string };
+};
+
+export async function htmlParaPdf(html: string, opcoes?: OpcoesPdf): Promise<Buffer> {
   const local = chromeLocal();
   const browser = await puppeteer.launch({
     args: local ? ["--no-sandbox", "--disable-dev-shm-usage"] : chromium.args,
@@ -28,12 +34,18 @@ export async function htmlParaPdf(html: string): Promise<Buffer> {
 
   try {
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: "load", timeout: 30000 });
+    await page.setContent(html, { waitUntil: "load", timeout: 120000 });
     await page.evaluate(() => document.fonts.ready);
+    const comCabeca = Boolean(opcoes?.cabecalhoHtml || opcoes?.rodapeHtml);
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
-      preferCSSPageSize: true,
+      preferCSSPageSize: !comCabeca,
+      displayHeaderFooter: comCabeca,
+      headerTemplate: opcoes?.cabecalhoHtml ?? "<div></div>",
+      footerTemplate: opcoes?.rodapeHtml ?? "<div></div>",
+      margin: opcoes?.margem,
+      timeout: 120000,
     });
     return Buffer.from(pdf);
   } finally {

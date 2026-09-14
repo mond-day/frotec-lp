@@ -26,7 +26,7 @@ export default function PropostaTopbar() {
           <Image src="/frotec-logo.png" alt="Frotec" width={936} height={149} />
         </Link>
         <div className="proposta-topbar-actions">
-          <span className="proposta-topbar-kicker">Gerador de propostas</span>
+          <span className="proposta-topbar-kicker">Área interna</span>
           <button type="button" className="btn btn-ghost" onClick={sair} disabled={saindo}>
             {saindo ? "Saindo..." : "Sair"}
           </button>

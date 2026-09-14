@@ -3632,3 +3632,70 @@ nav {
   gap: 12px;
   margin-top: 20px;
 }
+.proposta-hub {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  max-width: 760px;
+}
+.proposta-hub-card {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px 20px;
+  text-decoration: none;
+  background: var(--bg-elevated);
+}
+.proposta-hub-card:hover {
+  border-color: var(--primary);
+}
+.proposta-hub-n {
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  color: var(--primary);
+  letter-spacing: 0.12em;
+}
+.proposta-hub-card h2 {
+  font-size: 22px;
+  margin: 10px 0 8px;
+  text-transform: none;
+}
+.proposta-hub-card p {
+  color: var(--ink-mut);
+  font-size: 14px;
+}
+.proposta-veiculo {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin: 12px 0;
+}
+.proposta-veiculo-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+.proposta-veiculo-remover {
+  position: relative;
+  z-index: 2;
+  padding: 8px 14px;
+  font-size: 13px;
+}
+.proposta-veiculo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 0.6fr 0.5fr 0.9fr;
+  gap: 8px;
+}
+.proposta-warn {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--amber);
+}
+@media (max-width: 760px) {
+  .proposta-veiculo-grid {
+    grid-template-columns: 1fr;
+  }
+}
