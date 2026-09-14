@@ -14,6 +14,7 @@ oficina e os modulos da plataforma sao da Fase B.
 - Framer Motion (animacoes de entrada) + Lenis (smooth scroll)
 - Leaflet para o mapa de cobertura
 - Nodemailer para enviar os leads por SMTP
+- Gerador de propostas em `/propostas` (login unico + PDF via Puppeteer)
 - Build `standalone` para rodar em container Node
 
 ## Scripts de abertura rapida
@@ -54,14 +55,29 @@ retorna erro 503 e o usuario ve a mensagem de indisponibilidade.
 | `SMTP_PASS` | sim | Senha da caixa. Com 2FA, use senha de aplicativo |
 | `LEAD_EMAIL_TO` | sim | Quem recebe os leads. Aceita varios, separados por virgula |
 | `LEAD_EMAIL_FROM` | nao | Remetente. Vazio = o proprio `SMTP_USER` |
+| `PROPOSTAS_USER` | sim (para `/propostas`) | Usuario unico da area logada |
+| `PROPOSTAS_PASSWORD` | sim | Senha da area logada |
+| `PROPOSTAS_SESSION_SECRET` | sim | Chave HMAC do cookie de sessao |
 
-Todas sao lidas **em runtime** pela rota `/api/lead`. Isso e proposital: podem ser definidas
+Todas sao lidas **em runtime** pela rota `/api/lead` e pela area `/propostas`. Isso e proposital: podem ser definidas
 como variaveis do servico na stack do Swarm sem rebuildar a imagem. Uma variavel `NEXT_PUBLIC_*`
 seria congelada no momento do `next build`, ficaria visivel no navegador e nao serviria para
 credencial.
 
 Provedores com 2FA (Google Workspace, Microsoft 365) recusam a senha normal de login no SMTP:
 e preciso gerar uma senha de aplicativo especifica e usa-la em `SMTP_PASS`.
+
+## Gerador de propostas
+
+URL interna (sem link no site publico): `/propostas`. Login unico via `PROPOSTAS_USER` /
+`PROPOSTAS_PASSWORD`. O PDF e gerado na hora (`puppeteer-core` + `@sparticuz/chromium`) e
+nao e gravado.
+
+No Windows local, o gerador usa o Microsoft Edge se existir; no container de producao usa o
+Chromium empacotado. O stage **runner** da imagem e `node:22-slim` (Debian/glibc): o binario
+do `@sparticuz/chromium` nao e musl, e nesta maquina nao havia Docker para validar Alpine.
+
+Sem as tres variaveis `PROPOSTAS_*` o login responde 503.
 
 ## Fluxo do formulario de lead
 
@@ -129,12 +145,16 @@ app/
   page.tsx            ordem das secoes da landing
   globals.css         tokens de design + estilos das secoes
   api/lead/route.ts   recebe o form, valida e dispara o e-mail
+  propostas/          gerador de PDF (area logada)
+  api/propostas/      login, logout e gerar-pdf
 components/           uma secao por arquivo
 lib/
   cobertura.ts        waypoints do corredor no mapa
   cnpj.ts             mascara e validacao de CNPJ
   lead.ts             tipos, opcoes de rota e validacao compartilhada
   email.ts            config de SMTP e montagem do e-mail do lead
+  auth.ts             cookie HMAC da area /propostas
+  proposta.ts         validacao do formulario de proposta
 ```
 
 Componentes de secao sao Server Components. Sao Client Components apenas: `Header`,
@@ -213,7 +233,7 @@ em cada no do swarm.
    ja clona o projeto
 4. Confirme que `image:` aponta para `ghcr.io/mond-day/frotec-lp:latest` (ja vem assim)
 5. Confira o dominio `www.frotec.com.br` nas labels do Traefik
-6. Em **Environment variables** da stack, preencha as variaveis SMTP (passo 4)
+6. Em **Environment variables** da stack, preencha SMTP e `PROPOSTAS_*` (passo 4)
 7. Deploy. Depois de cada push na `main`, faca **Update the stack** (Pull and
    redeploy) para os nos puxarem o novo `latest`.
 
@@ -221,7 +241,7 @@ A rede `traefik-public` precisa existir (overlay/attachable, conforme o Traefik 
 Se o deploy falhar com "network traefik-public not found", a stack do Traefik ainda nao
 esta no swarm — isso nao se resolve neste repositorio.
 
-### 4. Preencher SMTP no Portainer
+### 4. Preencher SMTP e propostas no Portainer
 
 Copie os nomes de `.env.example`. Nao coloque senha no `stack.yml` versionado.
 
@@ -237,13 +257,17 @@ no momento do deploy.
 | `SMTP_PASS` | sim | Senha da caixa. Com 2FA, use senha de aplicativo |
 | `LEAD_EMAIL_TO` | sim | Quem recebe os leads. Aceita varios, separados por virgula |
 | `LEAD_EMAIL_FROM` | nao | Remetente. Vazio = o proprio `SMTP_USER` |
+| `PROPOSTAS_USER` | sim (para `/propostas`) | Usuario unico da area logada |
+| `PROPOSTAS_PASSWORD` | sim | Senha da area logada |
+| `PROPOSTAS_SESSION_SECRET` | sim | Chave HMAC do cookie de sessao |
 
-Trocar SMTP depois do go-live: edite as variaveis no Portainer e faca **Update the stack**.
+Trocar SMTP ou o login de propostas depois do go-live: edite as variaveis no Portainer e faca **Update the stack**.
 Nao precisa rebuildar a imagem.
 
-Atencao: `SMTP_PASS` fica visivel em texto para quem abre a stack no Portainer. Se isso for um
-problema, o proximo passo e um Docker secret montado em arquivo, o que exige adaptar
-`lerConfigSmtp` em `lib/email.ts` para ler o conteudo do arquivo apontado por `SMTP_PASS_FILE`.
+Atencao: `SMTP_PASS`, `PROPOSTAS_PASSWORD` e `PROPOSTAS_SESSION_SECRET` ficam visiveis em texto
+para quem abre a stack no Portainer. Sem Docker secret nesta fase.
+
+A area `/propostas` nao tem link no site publico. Sem as tres variaveis, o login responde 503.
 
 ### 5. Conferir depois do deploy
 

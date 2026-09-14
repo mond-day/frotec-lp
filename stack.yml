@@ -18,7 +18,7 @@
 #      existir — veja o README, secao Deploy.
 #   2. Portainer: Stacks > Add stack > cole este arquivo (ou aponte o Git).
 #   3. Confira o dominio nas labels do Traefik.
-#   4. Preencha as variaveis SMTP no ambiente da stack (ver .env.example).
+#   4. Preencha as variaveis SMTP e PROPOSTAS_* no ambiente da stack (ver .env.example).
 #
 # latest e mutavel: cada push na main a substitui. Para pin de versao,
 # troque a tag abaixo pelo SHA completo do commit publicado
@@ -48,6 +48,11 @@ services:
       SMTP_PASS: ${SMTP_PASS}
       LEAD_EMAIL_TO: ${LEAD_EMAIL_TO}
       LEAD_EMAIL_FROM: ${LEAD_EMAIL_FROM}
+      # Login unico do gerador de propostas. Texto plano no Portainer, mesmo
+      # risco ja aceito para SMTP_PASS. Sem essas tres, /propostas nao autentica.
+      PROPOSTAS_USER: ${PROPOSTAS_USER}
+      PROPOSTAS_PASSWORD: ${PROPOSTAS_PASSWORD}
+      PROPOSTAS_SESSION_SECRET: ${PROPOSTAS_SESSION_SECRET}
     networks:
       - traefik-public
     deploy:

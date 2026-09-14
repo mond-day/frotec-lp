@@ -1,4 +1,4 @@
-import { enviarLead, lerConfigSmtp } from "@/lib/email";
+import { enviarAgradecimentoLead, enviarLead, lerConfigSmtp } from "@/lib/email";
 import {
   CAMPO_ISCA,
   LEAD_VAZIO,
@@ -9,7 +9,7 @@ import {
 } from "@/lib/lead";
 
 /**
- * Recebe o formulario do site e envia o lead por e-mail ao time comercial.
+ * Recebe o formulario do site, avisa o comercial e envia o agradecimento ao lead.
  *
  * As credenciais de SMTP ficam so no servidor e sao lidas a cada request, entao
  * podem ser definidas como variaveis do servico na stack do Swarm sem rebuildar
@@ -82,6 +82,12 @@ export async function POST(request: Request) {
     console.error("[lead] Falha ao enviar o e-mail:", erro);
     console.error("[lead] Conteudo do lead perdido:", JSON.stringify(payload));
     return Response.json({ erro: "Nao foi possivel registrar o contato." }, { status: 502 });
+  }
+
+  try {
+    await enviarAgradecimentoLead(payload, config);
+  } catch (erro) {
+    console.error("[lead] Falha ao enviar o agradecimento ao lead:", erro);
   }
 
   return Response.json({ ok: true });

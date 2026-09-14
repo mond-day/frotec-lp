@@ -163,8 +163,8 @@ export function validarLead(dados: DadosLead, etapa?: 1 | 2): ErrosLead {
     }
 
     const email = dados.email.trim();
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-      erros.email = "Informe um e-mail válido.";
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      erros.email = "Informe um e-mail corporativo válido.";
     }
 
     if (dados.mensagem.length > 1000) {

@@ -3497,3 +3497,138 @@ nav {
     margin-left: 8px;
   }
 }
+
+/* ── Gerador de propostas ───────────────────────────────────────────────── */
+.proposta-login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+  background: var(--bg);
+}
+.proposta-login-card {
+  width: min(420px, 100%);
+  background: var(--bg-elevated);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+}
+.proposta-login-logo img {
+  height: 28px;
+  width: auto;
+  margin-bottom: 20px;
+}
+.proposta-login h1 {
+  margin: 8px 0 6px;
+  font-size: 28px;
+}
+.proposta-login-lead {
+  color: var(--ink-mut);
+  margin-bottom: 20px;
+}
+.proposta-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(13, 16, 22, 0.92);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+}
+.proposta-topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 64px;
+  gap: 16px;
+}
+.proposta-brand img {
+  height: 22px;
+  width: auto;
+}
+.proposta-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.proposta-topbar-kicker {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.proposta-page {
+  padding: 48px 0 80px;
+}
+.proposta-page h1 {
+  margin: 8px 0 10px;
+}
+.proposta-lead {
+  max-width: 560px;
+  color: var(--ink-mut);
+  margin-bottom: 28px;
+}
+.proposta-form {
+  max-width: 720px;
+}
+.proposta-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+}
+.proposta-steps li {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+}
+.proposta-steps li span {
+  font-family: var(--font-mono), monospace;
+  margin-right: 6px;
+  color: var(--primary);
+}
+.proposta-steps li.is-on {
+  color: var(--ink);
+  border-color: var(--primary);
+}
+.proposta-steps li.is-done {
+  color: var(--ink-mut);
+}
+.proposta-bloco {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.proposta-bloco legend {
+  padding: 0 8px;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.proposta-hint {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--ink-mut);
+}
+.proposta-check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 12px 0;
+  color: var(--ink-mut);
+  cursor: pointer;
+}
+.proposta-check input {
+  margin-top: 3px;
+}
+.proposta-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}

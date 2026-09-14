@@ -279,7 +279,7 @@ export default function LeadQualificationForm() {
               {erros.whatsapp && <span className="field-error">{erros.whatsapp}</span>}
             </div>
             <div className={`field${erros.email ? " has-error" : ""}`}>
-              <label htmlFor="email">E-mail corporativo (opcional)</label>
+              <label htmlFor="email">E-mail corporativo</label>
               <input
                 id="email"
                 name="email"
