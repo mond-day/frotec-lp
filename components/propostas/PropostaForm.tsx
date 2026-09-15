@@ -8,20 +8,15 @@ import {
   validarProposta,
   type DadosProposta,
   type ErrosProposta,
+  type EtapaProposta,
 } from "@/lib/proposta";
 
-const ETAPAS = [
-  "Cadastro",
-  "Frota",
-  "Vistoria",
-  "Escopo",
-  "Opcionais",
-  "Comercial",
-] as const;
+const ETAPAS = ["Cadastro", "Frota", "Vistoria", "Comercial"] as const;
+const ULTIMA: EtapaProposta = 4;
 
 export default function PropostaForm() {
   const [dados, setDados] = useState<DadosProposta>(PROPOSTA_VAZIA);
-  const [etapa, setEtapa] = useState<1 | 2 | 3 | 4 | 5 | 6>(1);
+  const [etapa, setEtapa] = useState<EtapaProposta>(1);
   const [erros, setErros] = useState<ErrosProposta>({});
   const [mensagem, setMensagem] = useState("");
   const [gerando, setGerando] = useState(false);
@@ -39,12 +34,12 @@ export default function PropostaForm() {
       return;
     }
     setMensagem("");
-    setEtapa((e) => Math.min(6, e + 1) as typeof etapa);
+    setEtapa((e) => Math.min(ULTIMA, e + 1) as EtapaProposta);
   }
 
   async function aoEnviar(evento: FormEvent) {
     evento.preventDefault();
-    if (etapa < 6) {
+    if (etapa < ULTIMA) {
       avancar();
       return;
     }
@@ -172,10 +167,10 @@ export default function PropostaForm() {
               {erros.quantidade ? <span className="field-error">{erros.quantidade}</span> : null}
             </div>
             <div className="field">
-              <label htmlFor="faixa">Faixa de categoria / marca</label>
+              <label htmlFor="faixa">Tipos de veículos abrangidos</label>
               <input
                 id="faixa"
-                placeholder="Texto livre — ex.: Mercedes Actros / faixa combinada"
+                placeholder="Texto livre — ex.: Mercedes Actros / Volvo FH"
                 value={dados.faixa}
                 onChange={(e) => campo("faixa", e.target.value)}
               />
@@ -208,78 +203,15 @@ export default function PropostaForm() {
             Pagamento antecipado da vistoria como condição de ativação
           </label>
           {erros.aceiteVistoria ? <span className="field-error">{erros.aceiteVistoria}</span> : null}
-          <div className="field">
-            <label htmlFor="irregularidades">Checklist / irregularidades identificadas</label>
-            <textarea
-              id="irregularidades"
-              rows={4}
-              value={dados.irregularidades}
-              onChange={(e) => campo("irregularidades", e.target.value)}
-            />
-          </div>
         </fieldset>
       ) : null}
 
       {etapa === 4 ? (
         <fieldset className="proposta-bloco">
-          <legend>Escopo do plano</legend>
-          <label className="proposta-check">
-            <input
-              type="checkbox"
-              checked={dados.cobreScr}
-              onChange={(e) => campo("cobreScr", e.target.checked)}
-            />
-            Peças críticas do sistema catalisador SCR / Arla 32 no escopo combinado
-          </label>
-          <div className="field">
-            <label htmlFor="tipoMotor">Tipo de motor / anexos técnicos</label>
-            <input
-              id="tipoMotor"
-              value={dados.tipoMotor}
-              onChange={(e) => campo("tipoMotor", e.target.value)}
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="fluxoSocorro">Fluxo de assistência / socorro</label>
-            <textarea
-              id="fluxoSocorro"
-              rows={5}
-              value={dados.fluxoSocorro}
-              onChange={(e) => campo("fluxoSocorro", e.target.value)}
-            />
-            {erros.fluxoSocorro ? <span className="field-error">{erros.fluxoSocorro}</span> : null}
-          </div>
-        </fieldset>
-      ) : null}
-
-      {etapa === 5 ? (
-        <fieldset className="proposta-bloco">
-          <legend>Serviços adicionais opcionais</legend>
-          <label className="proposta-check">
-            <input
-              type="checkbox"
-              checked={dados.alarmeModulo}
-              onChange={(e) => campo("alarmeModulo", e.target.checked)}
-            />
-            Sistema de segurança para módulo (alarme antifurto)
-          </label>
-          <label className="proposta-check">
-            <input
-              type="checkbox"
-              checked={dados.parafusosSegredo}
-              onChange={(e) => campo("parafusosSegredo", e.target.checked)}
-            />
-            Parafusos de segredo (antifurto de rodas/componentes)
-          </label>
-        </fieldset>
-      ) : null}
-
-      {etapa === 6 ? (
-        <fieldset className="proposta-bloco">
           <legend>Condições comerciais e vigência</legend>
           <div className="row-2">
             <div className="field">
-              <label htmlFor="valorMensal">Valor mensal (R$)</label>
+              <label htmlFor="valorMensal">Valor mensal por veículo (R$)</label>
               <input
                 id="valorMensal"
                 value={dados.valorMensal}
@@ -301,17 +233,18 @@ export default function PropostaForm() {
               {erros.vigencia ? <span className="field-error">{erros.vigencia}</span> : null}
             </div>
           </div>
-          <label className="proposta-check">
+          <div className="field">
+            <label htmlFor="validadeDias">Validade da proposta (dias)</label>
             <input
-              type="checkbox"
-              checked={dados.aceitePreventiva}
-              onChange={(e) => campo("aceitePreventiva", e.target.checked)}
+              id="validadeDias"
+              inputMode="numeric"
+              placeholder="Opcional — vazio = a definir"
+              maxLength={3}
+              value={dados.validadeDias}
+              onChange={(e) => campo("validadeDias", e.target.value.replace(/\D/g, "").slice(0, 3))}
             />
-            Aceite do calendário de manutenções preventivas obrigatórias
-          </label>
-          {erros.aceitePreventiva ? (
-            <span className="field-error">{erros.aceitePreventiva}</span>
-          ) : null}
+            {erros.validadeDias ? <span className="field-error">{erros.validadeDias}</span> : null}
+          </div>
         </fieldset>
       ) : null}
 
@@ -328,14 +261,14 @@ export default function PropostaForm() {
             className="btn btn-ghost"
             onClick={() => {
               setMensagem("");
-              setEtapa((e) => Math.max(1, e - 1) as typeof etapa);
+              setEtapa((e) => Math.max(1, e - 1) as EtapaProposta);
             }}
           >
             Voltar
           </button>
         ) : null}
         <button type="submit" className="btn btn-primary" disabled={gerando}>
-          {etapa < 6 ? "Continuar" : gerando ? "Gerando PDF..." : "Gerar PDF"}
+          {etapa < ULTIMA ? "Continuar" : gerando ? "Gerando PDF..." : "Gerar PDF"}
         </button>
       </div>
     </form>

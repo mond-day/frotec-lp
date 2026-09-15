@@ -1,9 +1,6 @@
 import { formatarTelefone } from "./lead";
 
-export const VISTORIA_PADRAO = "350";
-
-export const SOCORRO_PADRAO =
-  "Em caso de parada, o gestor aciona a central Frotec pelo WhatsApp. A central aciona a rede credenciada no corredor, audita diagnóstico e orçamento e autoriza a execução. Fora da área de atendimento, o atendimento é orçado à parte, com aprovação prévia.";
+export const VISTORIA_PADRAO = "340";
 
 export type DadosProposta = {
   empresa: string;
@@ -16,15 +13,10 @@ export type DadosProposta = {
   faixa: string;
   valorVistoria: string;
   aceiteVistoria: boolean;
-  irregularidades: string;
-  cobreScr: boolean;
-  tipoMotor: string;
-  fluxoSocorro: string;
-  alarmeModulo: boolean;
-  parafusosSegredo: boolean;
   valorMensal: string;
   vigencia: string;
-  aceitePreventiva: boolean;
+  validadeDias: string;
+  dataProposta: string;
 };
 
 export const PROPOSTA_VAZIA: DadosProposta = {
@@ -38,22 +30,27 @@ export const PROPOSTA_VAZIA: DadosProposta = {
   faixa: "",
   valorVistoria: VISTORIA_PADRAO,
   aceiteVistoria: false,
-  irregularidades: "",
-  cobreScr: false,
-  tipoMotor: "",
-  fluxoSocorro: SOCORRO_PADRAO,
-  alarmeModulo: false,
-  parafusosSegredo: false,
   valorMensal: "",
   vigencia: "",
-  aceitePreventiva: false,
+  validadeDias: "",
+  dataProposta: "",
 };
 
 export type ErrosProposta = Partial<Record<keyof DadosProposta, string>>;
 
+export type EtapaProposta = 1 | 2 | 3 | 4;
+
 function dinheiroValido(valor: string): boolean {
   const n = Number(String(valor).replace(",", "."));
   return Number.isFinite(n) && n >= 0;
+}
+
+export function numeroDinheiro(valor: string): number {
+  return Number(String(valor).replace(",", "."));
+}
+
+export function totalMensalFrota(quantidade: string, valorMensal: string): number {
+  return Number(quantidade) * numeroDinheiro(valorMensal);
 }
 
 /** Máscara progressiva: dd/mm/aaaa */
@@ -103,9 +100,9 @@ export function formatarDataBr(valor: string | Date): string {
   return paraDataBr(valor) || "—";
 }
 
-export function validarProposta(dados: DadosProposta, etapa?: 1 | 2 | 3 | 4 | 5 | 6): ErrosProposta {
+export function validarProposta(dados: DadosProposta, etapa?: EtapaProposta): ErrosProposta {
   const erros: ErrosProposta = {};
-  const ate = etapa ?? 6;
+  const ate = etapa ?? 4;
 
   if (ate >= 1) {
     if (dados.empresa.trim().length < 2) erros.empresa = "Informe a razão social ou o nome da empresa.";
@@ -134,20 +131,18 @@ export function validarProposta(dados: DadosProposta, etapa?: 1 | 2 | 3 | 4 | 5 
   }
 
   if (ate >= 4) {
-    if (dados.fluxoSocorro.trim().length < 10) {
-      erros.fluxoSocorro = "Descreva o fluxo de assistência.";
-    }
-  }
-
-  if (ate >= 6) {
-    if (!dinheiroValido(dados.valorMensal) || Number(String(dados.valorMensal).replace(",", ".")) <= 0) {
-      erros.valorMensal = "Informe o valor mensal.";
+    if (!dinheiroValido(dados.valorMensal) || numeroDinheiro(dados.valorMensal) <= 0) {
+      erros.valorMensal = "Informe o valor mensal por veículo.";
     }
     if (!dataBrValida(dados.vigencia)) {
       erros.vigencia = "Informe a data de vigência no formato dd/mm/aaaa.";
     }
-    if (!dados.aceitePreventiva) {
-      erros.aceitePreventiva = "O calendário de preventivas é condição do plano.";
+    const validade = dados.validadeDias.trim();
+    if (validade) {
+      const dias = Number(validade);
+      if (!Number.isInteger(dias) || dias < 1 || dias > 365) {
+        erros.validadeDias = "Informe a validade em dias (1 a 365) ou deixe em branco.";
+      }
     }
   }
 
@@ -159,10 +154,6 @@ export function normalizarProposta(corpo: unknown): DadosProposta {
   const dados: DadosProposta = {
     ...PROPOSTA_VAZIA,
     aceiteVistoria: Boolean(bruto.aceiteVistoria),
-    cobreScr: Boolean(bruto.cobreScr),
-    alarmeModulo: Boolean(bruto.alarmeModulo),
-    parafusosSegredo: Boolean(bruto.parafusosSegredo),
-    aceitePreventiva: Boolean(bruto.aceitePreventiva),
   };
 
   const textos: (keyof DadosProposta)[] = [
@@ -175,11 +166,10 @@ export function normalizarProposta(corpo: unknown): DadosProposta {
     "quantidade",
     "faixa",
     "valorVistoria",
-    "irregularidades",
-    "tipoMotor",
-    "fluxoSocorro",
     "valorMensal",
     "vigencia",
+    "validadeDias",
+    "dataProposta",
   ];
   for (const campo of textos) {
     const valor = bruto[campo];
@@ -188,11 +178,13 @@ export function normalizarProposta(corpo: unknown): DadosProposta {
 
   dados.whatsapp = formatarTelefone(dados.whatsapp);
   dados.vigencia = paraDataBr(dados.vigencia);
+  dados.dataProposta = paraDataBr(dados.dataProposta);
+  dados.validadeDias = dados.validadeDias.replace(/\D/g, "").slice(0, 3);
   return dados;
 }
 
-export function formatarMoeda(valor: string): string {
-  const n = Number(String(valor).replace(",", "."));
-  if (!Number.isFinite(n)) return valor;
+export function formatarMoeda(valor: string | number): string {
+  const n = typeof valor === "number" ? valor : numeroDinheiro(valor);
+  if (!Number.isFinite(n)) return String(valor);
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }

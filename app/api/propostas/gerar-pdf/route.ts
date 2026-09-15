@@ -5,7 +5,7 @@ import { montarHtmlProposta } from "@/lib/proposta-pdf-template";
 import { normalizarProposta, validarProposta } from "@/lib/proposta";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 export async function POST(request: Request) {
   const jar = await cookies();

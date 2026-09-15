@@ -43,3 +43,5 @@ next-env.d.ts
 
 # PDF de amostra gerado localmente (não versionar)
 /public/contrato-frotec-exemplo.pdf
+/public/proposta-frotec-exemplo.pdf
+/public/proposta-frotec-rodoamazonas.pdf

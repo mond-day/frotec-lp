@@ -1,7 +1,13 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { EXTENSAO_APROXIMADA } from "./cobertura";
-import { formatarDataBr, formatarMoeda, type DadosProposta } from "./proposta";
+import {
+  dataBrValida,
+  formatarDataBr,
+  formatarMoeda,
+  totalMensalFrota,
+  type DadosProposta,
+} from "./proposta";
 
 function escapar(valor: string): string {
   return valor
@@ -20,17 +26,13 @@ function pngDataUri(caminho: string): string {
   }
 }
 
-function simNao(v: boolean): string {
-  return v ? "Sim" : "Não";
-}
-
 function textoOuTraco(valor: string): string {
   const t = valor.trim();
   return t ? escapar(t).replace(/\n/g, "<br>") : "—";
 }
 
-function status(on: boolean, sim = "Incluído", nao = "Não incluso"): string {
-  return `<span class="flag ${on ? "is-on" : "is-off"}">${on ? sim : nao}</span>`;
+function itens(lista: string[], classe = "yes"): string {
+  return `<ul class="list ${classe}">${lista.map((item) => `<li>${item}</li>`).join("")}</ul>`;
 }
 
 function cssProposta(): string {
@@ -67,14 +69,14 @@ function cssProposta(): string {
       width: 5px;
       background: #10e1b1;
     }
-    .pad { padding: 16mm 18mm 20mm 20mm; height: 100%; display: flex; flex-direction: column; }
+    .pad { padding: 14mm 16mm 16mm 18mm; height: 100%; display: flex; flex-direction: column; }
     .top {
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid rgba(237,243,241,.12);
-      padding-bottom: 10px;
-      margin-bottom: 16px;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
     }
     .top img.word { height: 22px; width: auto; }
     .kicker {
@@ -85,7 +87,6 @@ function cssProposta(): string {
       color: #10e1b1;
     }
     .muted { color: rgba(237,243,241,.58); }
-    .dim { color: rgba(237,243,241,.38); }
     h1, h2, h3 {
       font-family: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;
       font-weight: 700;
@@ -93,19 +94,19 @@ function cssProposta(): string {
       margin: 0;
       text-transform: uppercase;
     }
-    h2 { font-size: 28px; line-height: 0.95; margin-bottom: 8px; }
-    h3 { font-size: 13px; letter-spacing: 0.14em; color: #10e1b1; margin-bottom: 10px; }
-    p { margin: 0 0 10px; font-size: 11.5px; line-height: 1.5; color: rgba(237,243,241,.72); }
-    .lead { font-size: 13px; line-height: 1.45; max-width: 150mm; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    h2 { font-size: 26px; line-height: 0.95; margin-bottom: 8px; }
+    h3 { font-size: 12px; letter-spacing: 0.14em; color: #10e1b1; margin: 10px 0 8px; }
+    p { margin: 0 0 8px; font-size: 11px; line-height: 1.45; color: rgba(237,243,241,.72); }
+    .lead { font-size: 12.5px; line-height: 1.45; max-width: 160mm; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
     .card {
       background: rgba(255,255,255,.035);
       border: 1px solid rgba(237,243,241,.1);
       border-radius: 10px;
-      padding: 12px 14px;
+      padding: 10px 12px;
     }
-    .card strong { display: block; font-size: 14px; color: #edf3f1; margin-top: 3px; }
+    .card strong { display: block; font-size: 13px; color: #edf3f1; margin-top: 2px; }
     .label {
       font-family: "IBM Plex Mono", Consolas, monospace;
       font-size: 8px;
@@ -117,17 +118,17 @@ function cssProposta(): string {
       background: #0b0e14;
       border: 1px solid rgba(16,225,177,.28);
       border-radius: 12px;
-      padding: 16px 18px;
+      padding: 12px 14px;
     }
     .stat .num {
       font-family: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;
-      font-size: 54px;
+      font-size: 42px;
       line-height: 0.9;
       color: #10e1b1;
     }
     .foot {
       margin-top: auto;
-      padding-top: 12px;
+      padding-top: 10px;
       border-top: 1px solid rgba(237,243,241,.1);
       display: flex;
       justify-content: space-between;
@@ -137,18 +138,6 @@ function cssProposta(): string {
       text-transform: uppercase;
       color: rgba(237,243,241,.38);
     }
-    .flag {
-      display: inline-block;
-      font-family: "IBM Plex Mono", Consolas, monospace;
-      font-size: 8px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(237,243,241,.16);
-    }
-    .flag.is-on { color: #08211b; background: #10e1b1; border-color: #10e1b1; }
-    .flag.is-off { color: rgba(237,243,241,.5); }
     .corridor {
       display: flex;
       align-items: center;
@@ -167,54 +156,46 @@ function cssProposta(): string {
       font-size: 10px;
     }
     .corridor-labels span { color: rgba(237,243,241,.7); }
-    .method {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      margin: 12px 0 18px;
-    }
-    .method .card { min-height: 92px; }
     .n {
       font-family: "IBM Plex Mono", Consolas, monospace;
       font-size: 9px;
       color: #10e1b1;
       letter-spacing: 0.12em;
     }
-    .method h4 {
-      font-family: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;
-      font-size: 16px;
-      text-transform: uppercase;
-      margin: 6px 0 4px;
-    }
-    .method p { font-size: 10px; margin: 0; }
-    .steps { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .price {
       font-family: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;
-      font-size: 56px;
+      font-size: 44px;
       line-height: 0.9;
       color: #edf3f1;
     }
     .list { list-style: none; padding: 0; margin: 0; }
     .list li {
-      font-size: 11.5px;
-      padding: 7px 0;
+      font-size: 10.5px;
+      padding: 5px 0;
       border-bottom: 1px solid rgba(237,243,241,.08);
       color: rgba(237,243,241,.78);
+      line-height: 1.4;
+    }
+    .list.tight li { padding: 3px 0; font-size: 10.5px; }
+    .list.two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 16px;
     }
     .list.no li::before { content: "—  "; color: #ff6b6b; }
     .list.yes li::before { content: "+  "; color: #10e1b1; }
-    .cover { padding: 22mm 20mm 18mm 22mm; }
-    .cover-mark { width: 72px; height: 72px; margin-bottom: 28px; }
-    .cover h1 { font-size: 58px; line-height: 0.88; max-width: 160mm; }
+    .cover { padding: 20mm 18mm 16mm 20mm; }
+    .cover-mark { width: 72px; height: 72px; margin-bottom: 24px; }
+    .cover h1 { font-size: 54px; line-height: 0.88; max-width: 170mm; }
     .cover .empresa {
       font-family: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;
       font-size: 28px;
       letter-spacing: -0.02em;
       text-transform: uppercase;
-      margin: 22px 0 6px;
+      margin: 18px 0 6px;
       color: #10e1b1;
     }
-    .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 22px; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
     .chip {
       border: 1px solid rgba(237,243,241,.14);
       padding: 8px 12px;
@@ -222,38 +203,15 @@ function cssProposta(): string {
       font-size: 10px;
     }
     .chip b { color: #edf3f1; }
-    .quote {
-      border-left: 3px solid #10e1b1;
-      padding: 4px 0 4px 14px;
-      font-size: 12px;
-      line-height: 1.55;
-      color: rgba(237,243,241,.82);
-    }
     .note {
       font-size: 10px;
-      line-height: 1.5;
+      line-height: 1.45;
       color: rgba(237,243,241,.5);
-      margin-top: 14px;
+      margin-top: 10px;
     }
     .push { margin-top: auto; }
-    .chain {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
-    .chain span {
-      font-family: "IBM Plex Mono", Consolas, monospace;
-      font-size: 9px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 7px 10px;
-      border: 1px solid rgba(237,243,241,.12);
-      border-radius: 999px;
-      color: rgba(237,243,241,.7);
-    }
     .sign {
-      min-height: 78px;
+      min-height: 72px;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
@@ -263,6 +221,41 @@ function cssProposta(): string {
       padding-top: 8px;
       font-size: 11px;
       color: rgba(237,243,241,.7);
+    }
+    table.tbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10.5px;
+      margin: 6px 0 10px;
+    }
+    table.tbl th {
+      font-family: "IBM Plex Mono", Consolas, monospace;
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-align: left;
+      color: #10e1b1;
+      border-bottom: 1px solid rgba(16,225,177,.32);
+      padding: 6px 8px;
+    }
+    table.tbl td {
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(237,243,241,.08);
+      color: rgba(237,243,241,.78);
+      vertical-align: top;
+      line-height: 1.4;
+    }
+    table.tbl td:first-child { color: #edf3f1; font-weight: 600; width: 34%; }
+    .chips-sys { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }
+    .chips-sys span {
+      font-family: "IBM Plex Mono", Consolas, monospace;
+      font-size: 8.5px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 6px 9px;
+      border: 1px solid rgba(237,243,241,.12);
+      border-radius: 999px;
+      color: rgba(237,243,241,.75);
     }
   `;
 }
@@ -283,19 +276,66 @@ function rodape(n: number, total: number, empresa: string): string {
   </div>`;
 }
 
+function tabela(cabecas: string[], linhas: string[][]): string {
+  return `<table class="tbl">
+    <thead><tr>${cabecas.map((c) => `<th>${c}</th>`).join("")}</tr></thead>
+    <tbody>${linhas
+      .map((linha) => `<tr>${linha.map((cel) => `<td>${cel}</td>`).join("")}</tr>`)
+      .join("")}</tbody>
+  </table>`;
+}
+
 export function montarHtmlProposta(dados: DadosProposta): string {
   const logo = pngDataUri(join(process.cwd(), "public", "frotec-logo.png"));
   const marca = pngDataUri(join(process.cwd(), "app", "icon.png"));
-  const emitido = formatarDataBr(new Date());
+  const dataDoc = dataBrValida(dados.dataProposta)
+    ? formatarDataBr(dados.dataProposta)
+    : formatarDataBr(new Date());
   const qtd = Number(dados.quantidade);
+  const temFrota = Number.isInteger(qtd) && qtd >= 1;
   const frotaLabel = qtd === 1 ? "veículo" : "veículos";
-  const total = 5;
+  const frotaTexto = temFrota ? `${escapar(dados.quantidade)} ${frotaLabel}` : "A definir";
+  const cliente = escapar(dados.empresa);
+  const mensal = formatarMoeda(dados.valorMensal);
+  const total = temFrota
+    ? formatarMoeda(totalMensalFrota(dados.quantidade, dados.valorMensal))
+    : "A definir";
+  const vistoria = formatarMoeda(dados.valorVistoria);
+  const validade = dados.validadeDias.trim()
+    ? `${escapar(dados.validadeDias)} dias`
+    : "A definir";
+  const vigenciaTexto = dataBrValida(dados.vigencia)
+    ? formatarDataBr(dados.vigencia)
+    : "Após formalização contratual";
+  const pagamentoVistoria = dados.aceiteVistoria
+    ? "Antecipado · condição de ativação"
+    : "A definir";
+  const linhaPessoa = [dados.responsavel, dados.cargo]
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .join(" · ");
+  const nomeAssinatura = dados.responsavel.trim() || "________________________________";
+  const cargoAssinatura = dados.cargo.trim() || "________________________________";
+  const investimentoLinhas: string[][] = [
+    ["Vistoria técnica inicial", `${escapar(vistoria)} por veículo`],
+    [
+      "Plano mensal de manutenção preventiva e corretiva, com reposição de peças no plano, sistema online e monitoramento 24/7",
+      `${escapar(mensal)} por veículo`,
+    ],
+  ];
+  if (temFrota) {
+    investimentoLinhas.push([
+      "Total mensal desta frota",
+      `${escapar(total)} · ${escapar(dados.quantidade)} ${frotaLabel}`,
+    ]);
+  }
+  const totalFolhas = 10;
 
   return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
-<title>Proposta Frotec — ${escapar(dados.empresa)}</title>
+<title>Proposta Frotec — ${cliente}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -309,49 +349,175 @@ export function montarHtmlProposta(dados: DadosProposta): string {
     ${marca ? `<img class="cover-mark" src="${marca}" alt="" />` : ""}
     <h1>Proposta<br>comercial</h1>
     <p class="lead" style="margin-top:16px">
-      Gestão técnica de frotas diesel. Avaliação, preventiva organizada e auditoria de
-      orçamento — para manutenção deixar de ser emergência e voltar a ser decisão.
+      Gestão técnica e manutenção de frota — preventiva, corretiva, reposição de peças
+      no escopo e suporte operacional contínuo, com custo mensal fixo por veículo.
     </p>
-    <div class="empresa">${escapar(dados.empresa)}</div>
-    <p>${escapar(dados.responsavel)} · ${escapar(dados.cargo)}</p>
+    <div class="empresa">${cliente}</div>
+    ${linhaPessoa ? `<p>${escapar(linhaPessoa)}</p>` : ""}
     <div class="chips">
-      <div class="chip"><span class="label">Frota</span><br><b>${escapar(dados.quantidade)} ${frotaLabel}</b></div>
-      <div class="chip"><span class="label">Vigência</span><br><b>${escapar(formatarDataBr(dados.vigencia))}</b></div>
-      <div class="chip"><span class="label">Mensalidade</span><br><b>${escapar(formatarMoeda(dados.valorMensal))}</b></div>
-      <div class="chip"><span class="label">Corredor</span><br><b>BR-163 · ${escapar(EXTENSAO_APROXIMADA)}</b></div>
+      <div class="chip"><span class="label">Data</span><br><b>${escapar(dataDoc)}</b></div>
+      <div class="chip"><span class="label">Validade</span><br><b>${validade}</b></div>
+      <div class="chip"><span class="label">Mensal / veículo</span><br><b>${escapar(mensal)}</b></div>
+      <div class="chip"><span class="label">Frota</span><br><b>${frotaTexto}</b></div>
     </div>
     <div class="push grid-3" style="margin-bottom:12px">
-      <div class="card"><div class="n">01</div><strong>Avaliar</strong><p>Checklist estruturado e classificação de risco da frota.</p></div>
-      <div class="card"><div class="n">02</div><strong>Prevenir</strong><p>Calendário técnico alinhado à operação, não à urgência.</p></div>
-      <div class="card"><div class="n">03</div><strong>Auditar</strong><p>Diagnóstico e orçamento passam pela central antes da execução.</p></div>
+      <div class="card"><div class="n">01</div><strong>Avaliar</strong><p>Vistoria individual, checklist e classificação de prioridade.</p></div>
+      <div class="card"><div class="n">02</div><strong>Manter</strong><p>Preventiva e corretiva mecânica e eletrônica, com peças no plano.</p></div>
+      <div class="card"><div class="n">03</div><strong>Acompanhar</strong><p>Sistema online, alertas e monitoramento 24 horas, sete dias.</p></div>
     </div>
-    ${rodape(1, total, dados.empresa)}
+    ${rodape(1, totalFolhas, dados.empresa)}
   </div>
 </section>
 
 <section class="sheet">
   <div class="pad">
-    ${cabecalho(logo, "01 — Cliente e operação")}
-    <h2>Quem opera.<br>Onde roda.</h2>
-    <p class="lead">Esta proposta descreve o plano da frota como um todo — não um contrato veículo a veículo.</p>
-    <div class="grid-2" style="margin:16px 0 14px">
-      <div class="card"><div class="label">Empresa</div><strong>${escapar(dados.empresa)}</strong></div>
-      <div class="card"><div class="label">Responsável</div><strong>${escapar(dados.responsavel)}</strong></div>
-      <div class="card"><div class="label">Cargo</div><strong>${escapar(dados.cargo)}</strong></div>
-      <div class="card"><div class="label">WhatsApp</div><strong>${escapar(dados.whatsapp)}</strong></div>
-      <div class="card"><div class="label">E-mail</div><strong>${escapar(dados.email)}</strong></div>
-      <div class="card"><div class="label">Categoria / faixa</div><strong>${textoOuTraco(dados.faixa)}</strong></div>
+    ${cabecalho(logo, "01 — Apresentação e objetivo")}
+    <h2>Gestão técnica<br>com custo previsível.</h2>
+    <p class="lead">A Frotec apresenta à ${cliente} uma solução de gestão técnica e manutenção de veículos, com atuação nas áreas eletrônica e mecânica, reposição de peças, acompanhamento das intervenções e suporte operacional contínuo.</p>
+    <p>A proposta apoia a redução de paradas inesperadas, a organização da preventiva e a agilidade da corretiva. O trabalho combina avaliação técnica, priorização, execução, acompanhamento digital por veículo e monitoramento 24 horas por dia, sete dias por semana.</p>
+    <p>O plano foi desenvolvido para reduzir gastos mensais elevados e variáveis com manutenção, com um custo mensal fixo por veículo. Dentro do escopo e dos limites contratados, a empresa conta com peças e mão de obra previstas no plano sem absorver, a cada ocorrência, despesas inesperadas.</p>
+    <div class="grid-2" style="margin:12px 0">
+      <div class="card"><div class="label">Empresa</div><strong>${cliente}</strong></div>
+      <div class="card"><div class="label">Responsável</div><strong>${textoOuTraco(dados.responsavel)}</strong></div>
+      <div class="card"><div class="label">Cargo</div><strong>${textoOuTraco(dados.cargo)}</strong></div>
+      <div class="card"><div class="label">WhatsApp</div><strong>${textoOuTraco(dados.whatsapp)}</strong></div>
+      <div class="card"><div class="label">E-mail</div><strong>${textoOuTraco(dados.email)}</strong></div>
+      <div class="card"><div class="label">Tipos de veículos</div><strong>${textoOuTraco(dados.faixa)}</strong></div>
     </div>
-    <div class="card" style="margin-bottom:14px">
+    <div class="card" style="margin-bottom:10px">
       <div class="label">Região e rotas de operação</div>
       <p style="margin:6px 0 0;color:#edf3f1">${textoOuTraco(dados.rotas)}</p>
     </div>
-    <div class="stat">
-      <div class="label">Tamanho da frota nesta proposta</div>
-      <div class="num">${escapar(dados.quantidade)}</div>
-      <p style="margin:4px 0 0">${frotaLabel} no plano · perfil técnico ${dados.faixa.trim() ? escapar(dados.faixa) : "a combinar na vistoria"}</p>
+    <h3>Objetivo da contratação</h3>
+    <p>Disponibilizar atendimento técnico integrado para manter os veículos em condições adequadas de funcionamento, segurança e disponibilidade, com previsibilidade financeira.</p>
+    ${itens([
+      "Maior previsibilidade na manutenção da frota",
+      "Substituição de despesas recorrentes por custo mensal fixo por veículo",
+      "Identificação antecipada de falhas e desgastes",
+      "Redução do tempo de veículo parado e mais agilidade nas ocorrências",
+      "Acompanhamento online dos veículos em oficina e monitoramento contínuo",
+      "Mais clareza sobre peças, mão de obra e prioridades",
+    ])}
+    ${rodape(2, totalFolhas, dados.empresa)}
+  </div>
+</section>
+
+<section class="sheet">
+  <div class="pad">
+    ${cabecalho(logo, "02 — Escopo dos serviços")}
+    <h2>O que entra<br>no plano.</h2>
+    <p>A Frotec realizará manutenção preventiva e corretiva, conforme a necessidade de cada veículo e o plano aprovado pela ${cliente}.</p>
+    ${tabela(
+      ["Área", "Serviços previstos"],
+      [
+        ["Mecânica", "Inspeção, diagnóstico, ajustes, reparos e troca de peças e componentes mecânicos conforme a necessidade do veículo."],
+        ["Eletrônica", "Diagnóstico, identificação de falhas, testes, correções e troca de peças e componentes eletrônicos, incluindo módulos de controle quando tecnicamente necessários."],
+        ["Módulos eletrônicos", "Atualizações, parametrizações e programações dos módulos, quando tecnicamente necessárias e compatíveis com o modelo."],
+        ["Sistema ARLA 32", "Diagnóstico, preventiva e corretiva do sistema completo: tanque, bomba, injetor, sensores, linhas, módulo e demais componentes."],
+        ["Catalisador", "Avaliação, correção de falhas e substituição quando tecnicamente necessária, incluindo verificação de eficiência e comunicação com o pós-tratamento."],
+        ["Preventiva", "Checklist técnico, itens de desgaste, programação de intervenções e acompanhamento do histórico."],
+        ["Corretiva", "Análise da ocorrência, definição de prioridade, reparo e validação do serviço."],
+        ["Peças", "Reposição das peças previstas no plano aprovado, observadas as condições e os limites do contrato."],
+        ["Controle de qualidade", "Número de série e data de substituição registrados para rastreabilidade e histórico do veículo."],
+        ["Sistema online", "Acesso do gestor a veículos em oficina, serviços autorizados, etapas e status."],
+        ["Monitoramento 24/7", "Canal 24 horas, sete dias, para receber problemas e encaminhar o atendimento."],
+        ["Atendimento na base", "Em urgência, técnicos mecânicos e eletrônicos na base da contratante, quando solicitado."],
+      ],
+    )}
+    ${rodape(3, totalFolhas, dados.empresa)}
+  </div>
+</section>
+
+<section class="sheet">
+  <div class="pad">
+    ${cabecalho(logo, "03 — Sistemas e método")}
+    <h2>Sistemas abrangidos<br>e como atendemos.</h2>
+    <h3>3.1 Sistemas e componentes</h3>
+    <p>Dentro do escopo, o plano abrange avaliação, preventiva, corretiva, diagnóstico, reparo e substituição dos conjuntos abaixo, conforme necessidade técnica:</p>
+    <div class="chips-sys">
+      <span>Motor</span><span>Câmbio</span><span>Diferencial</span><span>Turbina</span>
+      <span>Injeção</span><span>EGR</span><span>DPF</span><span>Catalisador</span>
+      <span>Módulos</span><span>Sistema de ar</span><span>Arrefecimento</span><span>Elétrico</span>
     </div>
-    <div class="card" style="margin-top:14px">
+    <p class="note">Peças, módulos, horas de mão de obra e demais serviços seguem os limites e as condições da seção 5.</p>
+    <h3>4. Metodologia</h3>
+    <div class="grid-2">
+      <div class="card">
+        <div class="n">4.1</div>
+        <strong>Vistoria técnica inicial</strong>
+        <p>Inspeção visual, checklist, diagnóstico eletrônico quando aplicável, evidências e itens que exigem atenção. Ao final, a ${cliente} recebe a visão das condições e das necessidades encontradas.</p>
+      </div>
+      <div class="card">
+        <div class="n">4.2</div>
+        <strong>Classificação e priorização</strong>
+        <p>As necessidades são organizadas por risco técnico, segurança, impacto na operação e possibilidade de agravamento.</p>
+      </div>
+    </div>
+    ${tabela(
+      ["Prioridade", "Critério", "Tratamento"],
+      [
+        ["Crítica", "Falha ou condição com potencial de comprometer a segurança ou impedir a operação.", "Atendimento prioritário."],
+        ["Alta", "Problema que pode evoluir rapidamente ou provocar parada do veículo.", "Programação em curto prazo."],
+        ["Planejada", "Item de desgaste ou manutenção sem risco imediato à operação.", "Inclusão no calendário preventivo."],
+      ],
+    )}
+    <div class="grid-2">
+      <div class="card">
+        <div class="n">4.3</div>
+        <strong>Execução e acompanhamento</strong>
+        <p>Após aprovação, os serviços são executados com OS, itens autorizados, peças, status e pendências no sistema. Necessidade fora do escopo é comunicada antes da execução.</p>
+      </div>
+      <div class="card">
+        <div class="n">4.4 / 4.5</div>
+        <strong>Alertas e monitoramento 24/7</strong>
+        <p>Avisos automáticos de preventiva. Canal 24 horas para registrar ocorrência e encaminhar atendimento. O monitoramento não inclui, por si só, guincho ou remoção.</p>
+      </div>
+    </div>
+    ${rodape(4, totalFolhas, dados.empresa)}
+  </div>
+</section>
+
+<section class="sheet">
+  <div class="pad">
+    ${cabecalho(logo, "04 — Composição do plano")}
+    <h2>Custo fixo.<br>Escopo fechado.</h2>
+    <div class="stat" style="margin:10px 0 12px">
+      <div class="label">Plano mensal por veículo</div>
+      <div class="price">${escapar(mensal)}</div>
+      <p style="margin:8px 0 0">Dentro desse escopo, não haverá limite financeiro para peças, componentes ou serviços de mão de obra. A responsabilidade da Frotec é manter o veículo em condições originais de trabalho, observadas as exclusões desta proposta.</p>
+    </div>
+    ${tabela(
+      ["Componente incluído", "Condição do plano"],
+      [
+        ["Gestão técnica", "Vistoria inicial, checklist, priorização, histórico, plano preventivo e acompanhamento das OS."],
+        ["Mão de obra", "Toda a mão de obra mecânica e eletrônica necessária aos serviços do escopo, sem limite de horas."],
+        ["Peças e componentes", "Peças mecânicas e eletrônicas, sensores, atuadores, módulos, ARLA 32 e catalisador, sem limite financeiro dentro do escopo."],
+        ["Sistema e suporte", "Sistema online, alertas preventivos, acompanhamento em oficina e monitoramento 24/7."],
+        ["Rede de atendimento", "Encaminhamento e acompanhamento pela rede de oficinas parceiras, conforme cobertura e disponibilidade."],
+      ],
+    )}
+    <p>A Frotec deverá executar ou coordenar os serviços necessários para devolver o veículo às condições originais de trabalho, sem cobrança adicional por peças ou mão de obra incluídas no escopo.</p>
+    <h3>5.1 O que será considerado custo extra</h3>
+    <p>Somente o item expressamente excluído do plano. Exemplos: pneus; troca de óleo e lubrificantes; guincho, remoção e transporte; deslocamentos superiores a 500 km quando houver necessidade de guincho; frete especial; danos de acidente, mau uso ou alteração não autorizada; serviços fora do escopo.</p>
+    <p>Nenhum custo extra será executado sem orçamento, justificativa técnica e aprovação prévia da ${cliente}. Em risco à segurança, o veículo poderá permanecer imobilizado até a autorização do responsável.</p>
+    ${rodape(5, totalFolhas, dados.empresa)}
+  </div>
+</section>
+
+<section class="sheet">
+  <div class="pad">
+    ${cabecalho(logo, "05 — Rede e atendimento")}
+    <h2>Oficinas, prazos<br>e 500 km.</h2>
+    <p>A Frotec mantém parcerias com mais de 30 oficinas padronizadas nas principais rotas do país, conforme cobertura, localização, capacidade e disponibilidade. A indicação depende da rota, do tipo de problema e das condições no momento da ocorrência.</p>
+    ${tabela(
+      ["Corredor ou região", "Cobertura prevista", "Observação"],
+      [
+        ["BR-163 — Sinop e região", "Base Alfadiesel e oficinas parceiras conforme necessidade", "Coordenação a partir de Sinop/MT."],
+        ["BR-163 — demais trechos", "Oficinas parceiras credenciadas conforme rota", "Confirmar disponibilidade antes do encaminhamento."],
+        ["BR-364 e demais rotas nacionais", "Rede parceira conforme cidade, capacidade e disponibilidade", "A cobertura efetiva é consultada na ocorrência."],
+      ],
+    )}
+    <div class="card" style="margin-bottom:10px">
       <div class="label">Corredor de atuação · BR-163 e ramal BR-364</div>
       <div class="corridor" aria-hidden="true">
         <span class="dot"></span><span class="line"></span>
@@ -362,151 +528,162 @@ export function montarHtmlProposta(dados: DadosProposta): string {
       <div class="corridor-labels">
         <span>Rondonópolis</span><span>Cuiabá</span><span>Sinop</span><span>Miritituba</span>
       </div>
-      <p style="margin:10px 0 0">Base em Sinop/MT. Ramal BR-364 até Vilhena/RO. Extensão aproximada ${escapar(EXTENSAO_APROXIMADA)}.</p>
+      <p style="margin:8px 0 0">Base em Sinop/MT. Ramal BR-364 até Vilhena/RO. Extensão aproximada ${escapar(EXTENSAO_APROXIMADA)}. A existência de parceria não significa disponibilidade simultânea em todas as cidades.</p>
     </div>
-    ${rodape(2, total, dados.empresa)}
+    <h3>7. Locais e prazo</h3>
+    <p>A Frotec é responsável pelos deslocamentos de até 500 km para atendimento relacionado ao plano. Além disso, ou quando exigir estrutura especializada, aciona-se a oficina parceira mais próxima. O prazo depende da complexidade, das condições do veículo e da capacidade da oficina.</p>
+    <div class="grid-2">
+      <div class="card">
+        <div class="n">7.1</div>
+        <strong>Atendimento emergencial na base</strong>
+        <p>Em urgência, técnicos mecânicos e eletrônicos na base da ${cliente}, para agilizar diagnóstico e liberação. Se exigir estrutura especializada, o veículo poderá seguir depois à rede parceira.</p>
+      </div>
+      <div class="card">
+        <div class="n">7.2</div>
+        <strong>Guincho e remoção</strong>
+        <p>Quando necessário para encaminhar o veículo. Contratação e custo são da ${cliente}. A Frotec orienta o acionamento, indica o destino e acompanha pelo sistema.</p>
+      </div>
+    </div>
+    ${rodape(6, totalFolhas, dados.empresa)}
   </div>
 </section>
 
 <section class="sheet">
   <div class="pad">
-    ${cabecalho(logo, "02 — Entrada e escopo")}
-    <h2>Vistoria, assistência<br>e o que entra no plano.</h2>
-    <div class="grid-2" style="margin:16px 0">
-      <div class="stat">
-        <div class="label">Vistoria de entrada · por veículo</div>
-        <div class="num" style="font-size:42px">${escapar(formatarMoeda(dados.valorVistoria))}</div>
-        <p style="margin:8px 0 0">Pagamento antecipado como condição de ativação: <b style="color:#edf3f1">${simNao(dados.aceiteVistoria)}</b></p>
+    ${cabecalho(logo, "06 — Garantias e investimento")}
+    <h2>Garantia, relatório<br>e valores.</h2>
+    <div class="grid-2" style="margin-bottom:10px">
+      <div class="card">
+        <div class="n">8.1</div>
+        <strong>Peças, serviços e retrabalho</strong>
+        <p>Garantias das peças e dos serviços são da Frotec. Peças: garantia do fabricante ou fornecedor. Serviços: mínimo de 90 dias, salvo prazo maior. Retrabalho no mesmo item, no prazo, sem cobrança adicional de peça ou mão de obra no escopo. Não cobre mau uso, acidente, alteração não autorizada, desgaste natural, intervenção de terceiros ou causa diferente do serviço original.</p>
       </div>
       <div class="card">
-        <div class="label">Irregularidades / checklist</div>
-        <p style="margin-top:8px;color:#edf3f1">${textoOuTraco(dados.irregularidades)}</p>
-        <p class="note">Se a vistoria identificar irregularidade técnica, a ativação fica condicionada ao acerto — orçado à parte.</p>
+        <div class="n">8.2</div>
+        <strong>Relatório mensal</strong>
+        <p>Até o 5º dia útil do mês seguinte: disponibilidade por veículo, paradas programadas e não programadas, OS abertas e concluídas, tempos médios, peças e números de série, custos extras aprovados, SLA, retrabalhos e ações preventivas.</p>
       </div>
     </div>
-    <h3>Escopo combinado</h3>
-    <div class="grid-2" style="margin-bottom:14px">
-      <div class="card">
-        <div class="label">SCR / Arla 32</div>
-        <strong>${status(dados.cobreScr)}</strong>
-        <p style="margin-top:8px">Peças críticas do sistema catalisador no escopo desta proposta.</p>
-      </div>
-      <div class="card">
-        <div class="label">Motor / anexos técnicos</div>
-        <strong>${textoOuTraco(dados.tipoMotor)}</strong>
+    <h3>9. Investimento</h3>
+    ${tabela(["Item", "Valor"], investimentoLinhas)}
+    <div class="stat" style="margin-bottom:10px">
+      <div class="grid-2">
+        <div><div class="label">Pagamento da vistoria</div><strong>${pagamentoVistoria}</strong></div>
+        <div><div class="label">Início de vigência</div><strong>${escapar(vigenciaTexto)}</strong></div>
       </div>
     </div>
-    <div class="card" style="margin-bottom:14px">
-      <div class="label">Fluxo de assistência</div>
-      <div class="quote" style="margin-top:10px">${textoOuTraco(dados.fluxoSocorro)}</div>
-    </div>
-    <h3>Opcionais</h3>
-    <div class="grid-2">
-      <div class="card">
-        <div class="label">Alarme de módulo</div>
-        <strong>${status(dados.alarmeModulo)}</strong>
-      </div>
-      <div class="card">
-        <div class="label">Parafusos de segredo</div>
-        <strong>${status(dados.parafusosSegredo)}</strong>
-      </div>
-    </div>
-    <h3 style="margin-top:16px">Ativação desta proposta</h3>
-    <div class="grid-3">
-      <div class="card"><div class="n">01</div><strong>Vistoria antecipada</strong><p>Pagamento da vistoria como condição de ativação do plano.</p></div>
-      <div class="card"><div class="n">02</div><strong>Laudo e regularização</strong><p>Irregularidade técnica trava a ativação até o acerto, orçado à parte.</p></div>
-      <div class="card"><div class="n">03</div><strong>Rotina na central</strong><p>Preventiva, OS e oficina credenciada passam a ser acompanhadas com método.</p></div>
-    </div>
-    ${rodape(3, total, dados.empresa)}
+    <p>O plano tem vigência mensal, com cobrança mensal de ${escapar(mensal)} por veículo. Qualquer parte pode encerrar mediante aviso prévio de 30 dias, sem multa, desde que serviços já executados e obrigações vencidas estejam quitados.</p>
+    <p class="note">Salvo previsão expressa em contrato, serviços adicionais, peças fora do escopo, deslocamentos extraordinários, fretes e intervenções não previstas devem ser orçados e aprovados previamente. Documento gerado em ${escapar(dataDoc)}.</p>
+    ${rodape(7, totalFolhas, dados.empresa)}
   </div>
 </section>
 
 <section class="sheet">
   <div class="pad">
-    ${cabecalho(logo, "03 — Método Frotec")}
-    <h2>Troque manutenção reativa<br>por rotina previsível.</h2>
-    <p class="lead">Cinco perguntas que a operação passa a responder com método — não com improviso.</p>
-    <div class="method">
-      <div class="card"><div class="n">01</div><h4>Diagnosticar</h4><p>O que precisa de atenção agora?</p></div>
-      <div class="card"><div class="n">02</div><h4>Priorizar</h4><p>O que pode esperar e o que não pode?</p></div>
-      <div class="card"><div class="n">03</div><h4>Prevenir</h4><p>Quando intervir antes de parar?</p></div>
-      <div class="card"><div class="n">04</div><h4>Auditar</h4><p>O serviço e o orçamento fazem sentido?</p></div>
-      <div class="card"><div class="n">05</div><h4>Acompanhar</h4><p>O que aconteceu na frota?</p></div>
+    ${cabecalho(logo, "07 — Diferenciais e entregas")}
+    <h2>Além do reparo<br>pontual.</h2>
+    <p>O diferencial está na rotina técnica, na visibilidade das intervenções e na previsibilidade para a operação.</p>
+    <div class="grid-2" style="margin-bottom:8px">
+      <div class="card"><div class="n">10.1</div><strong>Sistema online</strong><p>Acompanhar veículos em oficina, etapas, pendências e conclusão.</p></div>
+      <div class="card"><div class="n">10.2</div><strong>Monitoramento 24/7</strong><p>Registrar ocorrências e direcionar o atendimento o dia todo.</p></div>
+      <div class="card"><div class="n">10.3</div><strong>Alertas de preventiva</strong><p>Avisos automáticos antes que o item vire falha operacional.</p></div>
+      <div class="card"><div class="n">10.4</div><strong>Rede 30+ oficinas</strong><p>Mais opções nas principais rotas e maior uniformidade.</p></div>
+      <div class="card"><div class="n">10.5</div><strong>Atendimento integrado</strong><p>Eletrônica, mecânica, preventiva e corretiva na mesma rotina.</p></div>
+      <div class="card"><div class="n">10.6</div><strong>Peças no plano</strong><p>Reposição integrada, sem negociação fragmentada a cada OS.</p></div>
+      <div class="card"><div class="n">10.7</div><strong>Agilidade</strong><p>Priorização pelo risco e pelo impacto operacional.</p></div>
+      <div class="card"><div class="n">10.8</div><strong>Decisão informada</strong><p>Diagnóstico, evidências, histórico e acompanhamento online.</p></div>
     </div>
-    <h3>Como o plano entra na operação</h3>
-    <div class="steps">
-      <div class="card"><div class="n">01</div><strong>Entendemos a operação</strong><p>Base, perfil de rota, tamanho da frota e categorias — para desenhar o acompanhamento certo.</p></div>
-      <div class="card"><div class="n">02</div><strong>Avaliamos a frota</strong><p>Checklist estruturado, evidências e classificação de risco para saber o que precisa de atenção primeiro.</p></div>
-      <div class="card"><div class="n">03</div><strong>Montamos a rotina</strong><p>Preventiva programada, aprovações e calendário alinhados à operação — não ao improviso da urgência.</p></div>
-      <div class="card"><div class="n">04</div><strong>Acompanhamos os serviços</strong><p>OS, itens, status e auditoria — para decidir com mais informação antes de aprovar a oficina.</p></div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="n">10.9</div>
+      <strong>Acompanhamento por veículo</strong>
+      <p style="margin:6px 0 0">Histórico de vistoria, intervenções, peças, pendências e próximas ações.</p>
     </div>
-    <div class="card" style="margin-top:16px">
-      <div class="label">Por que a rotina existe</div>
-      <p style="margin:8px 0 0;color:#edf3f1">Um problema técnico raramente termina na oficina. Sem preventiva, a falha vira caminhão parado, carga atrasada e margem reduzida.</p>
-      <div class="chain">
-        <span>Falha</span><span>Caminhão parado</span><span>Carga atrasada</span><span>Custo extra</span><span>Cliente pressionando</span><span>Margem reduzida</span>
-      </div>
-    </div>
-    ${rodape(4, total, dados.empresa)}
+    <h3>11. Entregas previstas</h3>
+    ${itens(
+      [
+        "Vistoria técnica individual, checklist, registro de falhas e classificação de prioridade",
+        "Plano de manutenção preventiva e corretiva; atualização de módulos quando necessária",
+        "Sistema online, acompanhamento de OS, relação de peças e número de série",
+        "Alertas automáticos de preventiva e histórico básico por veículo",
+        "Monitoramento 24/7 e técnicos na base da contratante, quando solicitado",
+        "Registro de ocorrências e comunicação de necessidades adicionais",
+      ],
+      "yes tight",
+    )}
+    ${rodape(8, totalFolhas, dados.empresa)}
   </div>
 </section>
 
 <section class="sheet">
   <div class="pad">
-    ${cabecalho(logo, "04 — Condições e limites")}
-    <h2>Investimento<br>e o que isto não é.</h2>
-    <div class="stat" style="margin:14px 0 16px">
-      <div class="label">Valor mensal desta proposta</div>
-      <div class="price">${escapar(formatarMoeda(dados.valorMensal))}</div>
-      <div class="grid-2" style="margin-top:12px">
-        <div><div class="label">Início de vigência</div><strong>${escapar(formatarDataBr(dados.vigencia))}</strong></div>
-        <div><div class="label">Calendário de preventivas</div><strong>${status(dados.aceitePreventiva, "Aceito", "Pendente")}</strong></div>
+    ${cabecalho(logo, "08 — Exclusões e responsabilidades")}
+    <h2>O que não entra.<br>Quem faz o quê.</h2>
+    <p>Os itens abaixo não fazem parte do plano mensal e não estão incluídos em ${escapar(mensal)} por veículo:</p>
+    ${itens(
+      [
+        "Pneus: troca, conserto, recapagem, alinhamento, balanceamento ou aquisição",
+        "Troca de óleo, lubrificantes e serviços de lubrificação, salvo contratação adicional expressa",
+        "Guincho, remoção ou transporte do veículo",
+        "Molas e componentes de suspensão",
+        "Freios: pastilhas, lonas, discos, tambores e demais componentes",
+        "Danos de acidentes, mau uso, negligência, operação inadequada ou alterações não autorizadas",
+        "Peças e serviços expressamente excluídos ou que ultrapassem os limites do contrato",
+      ],
+      "no",
+    )}
+    <p class="note">Pneus, óleo e guincho podem ser solicitados a terceiros ou contratados à parte, com orçamento e aprovação específicos.</p>
+    <h3>13. Responsabilidades da Frotec</h3>
+    <p>Realizar os serviços aprovados com diligência técnica, comunicar necessidades, manter registros no sistema, disponibilizar o monitoramento 24/7, informar o andamento e pedir aprovação para o que estiver fora do escopo. Buscar peças e soluções compatíveis com a aplicação do veículo. A Frotec não se responsabiliza pela contratação, disponibilidade, custo ou execução de guincho, remoção ou transporte — salvo acordo escrito em contrário.</p>
+    <h3>14. Responsabilidades da ${cliente}</h3>
+    <p>Disponibilizar os veículos, fornecer informações, indicar prioridades, autorizar serviços e efetuar os pagamentos. Acompanhar os alertas, comunicar alterações de rota, uso, carga, sintomas ou ocorrências. Providenciar e custear os serviços excluídos, incluindo pneus, óleo, guincho, remoção e transporte, quando necessários.</p>
+    ${rodape(9, totalFolhas, dados.empresa)}
+  </div>
+</section>
+
+<section class="sheet">
+  <div class="pad">
+    ${cabecalho(logo, "09 — Condições e aceite")}
+    <h2>Condições comerciais<br>e assinaturas.</h2>
+    ${tabela(
+      ["Condição", "Definição"],
+      [
+        ["Forma de pagamento da vistoria", "A definir"],
+        ["Forma de pagamento do plano", `Cobrança mensal de ${escapar(mensal)} por veículo`],
+        ["Vigência do plano", "Mensal"],
+        ["Início de vigência", escapar(vigenciaTexto)],
+        ["Encerramento", "Aviso prévio de 30 dias, sem multa"],
+        ["Prazo de pagamento", "A definir"],
+        ["Garantia dos serviços e peças", "Responsabilidade da Frotec, conforme seção 8"],
+        ["Validade da proposta", validade],
+        ["Início dos serviços", "Após aprovação e formalização contratual"],
+      ],
+    )}
+    <p>A aprovação desta proposta representa a concordância com o escopo geral. A execução começa após a definição das condições comerciais pendentes e a formalização do contrato ou ordem de serviço correspondente.</p>
+    <div class="grid-2" style="margin:12px 0">
+      <div class="card sign">
+        <div class="line">${cliente}<br>Nome: ${escapar(nomeAssinatura)} · Cargo: ${escapar(cargoAssinatura)}<br>Assinatura / data</div>
+      </div>
+      <div class="card sign">
+        <div class="line">Frotec · Sinop/MT<br>Representante / cargo<br>Assinatura / data</div>
       </div>
     </div>
     <div class="grid-2">
-      <div>
-        <h3>O que a Frotec faz</h3>
-        <ul class="list yes">
-          <li>Avaliação técnica da frota</li>
-          <li>Classificação de risco</li>
-          <li>Organização da preventiva</li>
-          <li>Auditoria técnica de OS</li>
-          <li>Acesso à rede conforme cobertura</li>
-          <li>Acompanhamento previsto em contrato</li>
-        </ul>
+      <div class="card">
+        <div class="label">Contatos da Frotec</div>
+        <strong>Gestão técnica de frotas diesel</strong>
+        <p style="margin:6px 0 0;color:#edf3f1">Base: Alfadiesel — Sinop/MT, BR-163<br>E-mail: contato@frotec.com.br<br>Telefone: (69) 9 9221-6293<br>Site: frotec.com.br</p>
       </div>
-      <div>
-        <h3>O que isto não é</h3>
-        <ul class="list no">
-          <li>Seguro</li>
-          <li>Garantia mecânica</li>
-          <li>Substituto da responsabilidade do proprietário</li>
-          <li>Promessa de zero falhas</li>
-          <li>Cobertura ilimitada de qualquer serviço</li>
-        </ul>
+      <div class="card">
+        <div class="label">Frota nesta proposta</div>
+        <strong>${frotaTexto}</strong>
+        <p style="margin:6px 0 0;color:#edf3f1">Mensal por veículo ${escapar(mensal)}${temFrota ? `<br>Total mensal ${escapar(total)}` : ""}</p>
       </div>
     </div>
-    <p class="note">
-      A Frotec presta serviços de gestão técnica e consultoria em manutenção de frotas.
-      Esta proposta não é seguro, não é garantia estendida e não constitui operação securitária.
-      Escopo, limites e exclusões de cada plano são definidos em contrato.
-      Cada ordem de serviço passa por aprovação técnica da central antes da execução.
-      Documento gerado em ${escapar(emitido)}.
-    </p>
-    <h3 style="margin-top:16px">Próximos passos</h3>
-    <div class="grid-3" style="margin-bottom:14px">
-      <div class="card"><div class="n">01</div><strong>Confirmar esta proposta</strong><p>Validar valores, vigência e escopo combinado com o responsável.</p></div>
-      <div class="card"><div class="n">02</div><strong>Agendar a vistoria</strong><p>Entrada técnica da frota, com laudo e classificação de risco.</p></div>
-      <div class="card"><div class="n">03</div><strong>Contrato e rotina</strong><p>Ativação após vistoria e início do calendário de preventivas.</p></div>
-    </div>
-    <div class="grid-2">
-      <div class="card sign"><div class="line">Aceite do cliente · ${escapar(dados.responsavel)}</div></div>
-      <div class="card sign"><div class="line">Frotec · Sinop/MT</div></div>
-    </div>
-    ${rodape(5, total, dados.empresa)}
+    ${rodape(10, totalFolhas, dados.empresa)}
   </div>
 </section>
 
 </body>
 </html>`;
 }
+
