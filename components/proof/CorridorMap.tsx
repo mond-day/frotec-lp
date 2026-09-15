@@ -14,7 +14,22 @@ const VH = 770;
 const BASE_TILT = 17;
 const foundBase = CIDADES_ESQUEMA.findIndex((c) => c.base);
 const SINOP_INDEX = foundBase >= 0 ? foundBase : 2;
-const LABEL_BELOW = new Set(["Cuiabá", "Diamantino", "Comodoro", "Rondonópolis"]);
+const LABEL_LADO: Record<string, "left" | "right" | "top" | "bottom-left"> = {
+  Miritituba: "left",
+  "Novo Progresso": "left",
+  "Guarantã do Norte": "left",
+  "Peixoto de Azevedo": "right",
+  Sinop: "left",
+  Sorriso: "left",
+  "Lucas do Rio Verde": "left",
+  "Nova Mutum": "right",
+  Cuiabá: "left",
+  Rondonópolis: "left",
+  Diamantino: "bottom-left",
+  "Campo Novo do Parecis": "top",
+  Comodoro: "top",
+  Vilhena: "right",
+};
 
 function corCidade(uf: "MT" | "RO" | "PA") {
   return uf === "RO" ? "#2d8cff" : "#10e1b1";
@@ -82,8 +97,8 @@ export default function CorridorMap({ onExplorarGeo }: Props) {
                 <stop offset="60%" stopColor="#2d8cff" />
                 <stop offset="100%" stopColor="#8ec4ff" />
               </linearGradient>
-              <filter id="mapGlow" x="-40%" y="-40%" width="180%" height="180%">
-                <feGaussianBlur stdDeviation="16" result="b" />
+              <filter id="mapGlow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="6" result="b" />
                 <feMerge>
                   <feMergeNode in="b" />
                   <feMergeNode in="SourceGraphic" />
@@ -103,26 +118,26 @@ export default function CorridorMap({ onExplorarGeo }: Props) {
             </g>
 
             <g filter="url(#mapGlow)" fill="none" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points={POLYLINE_BR163} stroke="#10e1b1" strokeWidth="30" opacity="0.13" />
-              <polyline points={POLYLINE_BR364} stroke="#2d8cff" strokeWidth="26" opacity="0.1" />
+              <polyline points={POLYLINE_BR163} stroke="#10e1b1" strokeWidth="12" opacity="0.18" />
+              <polyline points={POLYLINE_BR364} stroke="#2d8cff" strokeWidth="10" opacity="0.14" />
             </g>
             <polyline
               points={POLYLINE_BR163}
               fill="none"
-              stroke="rgba(0,0,0,.55)"
-              strokeWidth="9"
+              stroke="rgba(0,0,0,.45)"
+              strokeWidth="6"
               strokeLinecap="round"
               strokeLinejoin="round"
-              transform="translate(4,7)"
+              transform="translate(2,4)"
             />
             <polyline
               points={POLYLINE_BR364}
               fill="none"
-              stroke="rgba(0,0,0,.55)"
-              strokeWidth="8"
+              stroke="rgba(0,0,0,.45)"
+              strokeWidth="5"
               strokeLinecap="round"
               strokeLinejoin="round"
-              transform="translate(4,7)"
+              transform="translate(2,4)"
             />
             <polyline
               points={POLYLINE_BR163}
@@ -169,7 +184,8 @@ export default function CorridorMap({ onExplorarGeo }: Props) {
             const px = ((c.x - VX) / VW) * 100;
             const py = ((c.y - VY) / VH) * 100;
             const hideLabel = narrow && !c.base && !on;
-            const below = LABEL_BELOW.has(c.nome);
+            const lado = LABEL_LADO[c.nome] ?? "left";
+            const ladoClass = lado === "bottom-left" ? "is-bottom-left" : `is-${lado}`;
 
             return (
               <button
@@ -184,7 +200,7 @@ export default function CorridorMap({ onExplorarGeo }: Props) {
                   background: c.base || on ? cor : "#0d1016",
                   borderColor: cor,
                   transform: `translate(-50%, -50%) rotateX(-${tilt}deg)`,
-                  zIndex: on ? 30 : c.base ? 20 : 10,
+                  zIndex: on ? 30 : c.base ? 24 : 12,
                   boxShadow:
                     c.base || on
                       ? `0 6px 14px rgba(0,0,0,.6), 0 0 20px ${c.uf === "RO" ? "rgba(45,140,255,.65)" : "rgba(16,225,177,.65)"}`
@@ -202,12 +218,10 @@ export default function CorridorMap({ onExplorarGeo }: Props) {
                   }}
                 />
                 <span
-                  className={`corridor-label${below ? " is-below" : ""}${hideLabel ? " is-hidden" : ""}`}
+                  className={`corridor-label ${ladoClass}${hideLabel ? " is-hidden" : ""}${on ? " is-on" : ""}`}
                   style={{
                     fontSize: c.base ? 12 : 10.5,
-                    fontWeight: c.base ? 600 : 500,
-                    color: on || c.base ? "#edf3f1" : "rgba(237,243,241,.6)",
-                    background: on ? "rgba(16,225,177,.16)" : "transparent",
+                    fontWeight: c.base || on ? 600 : 500,
                   }}
                 >
                   {c.nome}

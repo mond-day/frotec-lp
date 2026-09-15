@@ -1682,6 +1682,8 @@ nav {
   width: 100%;
   height: 100%;
   overflow: visible;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .corridor-dash {
@@ -1700,6 +1702,8 @@ nav {
   display: block;
   border: 2px solid;
   transform-style: preserve-3d;
+  overflow: visible;
+  z-index: 2;
   transition: width 260ms ease, height 260ms ease, background 260ms ease;
 }
 
@@ -1722,12 +1726,41 @@ nav {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95);
-  padding: 3px 8px;
+  color: #edf3f1;
+  background: rgba(8, 11, 17, 0.92);
+  border: 1px solid rgba(237, 243, 241, 0.12);
+  padding: 4px 8px;
   border-radius: 6px;
   pointer-events: none;
+  z-index: 3;
 }
-
+.corridor-label.is-on {
+  border-color: rgba(16, 225, 177, 0.45);
+  background: rgba(8, 18, 16, 0.95);
+}
+.corridor-label.is-left {
+  left: auto;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+.corridor-label.is-right {
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateX(0) translateY(-50%);
+}
+.corridor-label.is-top {
+  left: 50%;
+  top: auto;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+}
+.corridor-label.is-bottom-left {
+  left: auto;
+  right: calc(100% + 8px);
+  top: calc(100% + 6px);
+  transform: none;
+}
 .corridor-label.is-below {
   top: auto;
   bottom: calc(100% + 8px);
@@ -2001,6 +2034,10 @@ nav {
   gap: 2px;
   white-space: nowrap;
   pointer-events: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(8, 11, 17, 0.92);
+  border: 1px solid rgba(237, 243, 241, 0.12);
 }
 
 .map-city-label-inner span {

@@ -50,26 +50,28 @@ export default function CoverageMap() {
         attributionControl: true,
       });
 
+      mapa.createPane("rotas");
+      mapa.getPane("rotas")!.style.zIndex = "400";
+      mapa.createPane("cidades");
+      mapa.getPane("cidades")!.style.zIndex = "650";
+
       L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
         { attribution: "Tiles &copy; Esri", maxZoom: 16 },
       ).addTo(mapa);
 
-      L.tileLayer(
-        "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
-        { maxZoom: 16, pane: "shadowPane" },
-      ).addTo(mapa);
-
       const desenharRota = (pontos: Ponto[], cor: string) => {
         L.polyline(pontos, {
+          pane: "rotas",
           color: cor,
-          weight: 26,
-          opacity: 0.1,
+          weight: 10,
+          opacity: 0.16,
           lineCap: "round",
           lineJoin: "round",
         }).addTo(mapa!);
 
         L.polyline(pontos, {
+          pane: "rotas",
           color: cor,
           weight: 3,
           opacity: 0.9,
@@ -82,6 +84,7 @@ export default function CoverageMap() {
       desenharRota(ROTA_BR364, COR_BR364);
 
       L.marker(SEDE.coords, {
+        pane: "cidades",
         icon: L.divIcon({ className: "", html: '<div class="hq-marker"></div>', iconSize: [15, 15] }),
         title: SEDE.nome,
       })
@@ -90,6 +93,7 @@ export default function CoverageMap() {
 
       EXTREMIDADES.forEach((ponta) => {
         L.marker(ponta.coords, {
+          pane: "cidades",
           icon: L.divIcon({
             className: "",
             html: '<div class="dest-marker"></div>',
@@ -103,13 +107,14 @@ export default function CoverageMap() {
 
       LABELS.forEach((label) => {
         L.marker(label.coords, {
+          pane: "cidades",
           icon: L.divIcon({
             className: "map-city-label",
             html: `<div class="map-city-label-inner"><span>${label.nome}</span>${
               label.sub ? `<small>${label.sub}</small>` : ""
             }</div>`,
             iconSize: [0, 0],
-            iconAnchor: [-10, 8],
+            iconAnchor: [-12, 10],
           }),
           interactive: false,
           keyboard: false,
