@@ -59,4 +59,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+COPY --from=builder --chown=nextjs:nodejs /app/scripts/boot-log.cjs /app/scripts/next-console-preload.cjs ./scripts/
+# Linhas de abertura do Next já no padrão Sonder Corp (LOG_FORMAT=json|human)
+CMD ["node", "-r", "./scripts/next-console-preload.cjs", "server.js"]
