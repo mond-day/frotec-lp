@@ -1,0 +1,3 @@
+# Readable by the Agent on demand, but kept out of the semantic index.
+pnpm-lock.yaml
+package-lock.json

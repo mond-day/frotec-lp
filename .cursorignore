@@ -1,0 +1,33 @@
+# Cursor AI/Agent exclusions. Keep source, docs, tests, migrations and config visible.
+# Secrets (examples stay visible)
+.env
+.env.*
+!.env.example
+!.env.*.example
+!.env.example.*
+*.pem
+*.p12
+*.pfx
+
+# Dependencies, build output, caches
+node_modules/
+.next/
+.next-e2e/
+.turbo/
+dist/
+build/
+out/
+.cache/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Test/runtime artifacts
+test-results/
+playwright-report/
+blob-report/
+*.log
+.DS_Store
+
+# Not test coverage: landing-page media
+!public/media/coverage/

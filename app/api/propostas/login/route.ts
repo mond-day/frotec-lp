@@ -7,6 +7,7 @@ import {
   loginConfigurado,
   opcoesCookie,
 } from "@/lib/auth";
+import { ipDaRequisicao, limparFalhas, registrarFalha, segundosBloqueado } from "@/lib/limite-login";
 
 export const runtime = "nodejs";
 
@@ -16,6 +17,15 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { erro: "Área de propostas indisponível no momento." },
       { status: 503 },
+    );
+  }
+
+  const ip = ipDaRequisicao(request);
+  const espera = segundosBloqueado(ip);
+  if (espera > 0) {
+    return NextResponse.json(
+      { erro: "Muitas tentativas. Aguarde alguns minutos e tente de novo." },
+      { status: 429, headers: { "Retry-After": String(espera) } },
     );
   }
 
@@ -30,9 +40,11 @@ export async function POST(request: Request) {
   const senha = typeof corpo.senha === "string" ? corpo.senha : "";
 
   if (!credenciaisValidas(usuario, senha)) {
+    registrarFalha(ip);
     return NextResponse.json({ erro: "Usuário ou senha inválidos." }, { status: 401 });
   }
 
+  limparFalhas(ip);
   const token = await criarSessao();
   if (!token) {
     return NextResponse.json({ erro: "Área de propostas indisponível no momento." }, { status: 503 });
